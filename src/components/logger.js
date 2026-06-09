@@ -99,7 +99,7 @@ async function handleSaveActivity(category, label, kgCO2, source = 'manual') {
   
   await updateStreak(underBudget);
 
-  window.showToast(\`Logged: \${label} (+\${kgCO2} kg)\`, 'success');
+  window.showToast(`Logged: ${label} (+${kgCO2} kg)`, 'success');
 }
 
 export function init() {
@@ -169,15 +169,15 @@ export function init() {
 
       // Render confirmation cards
       resultsDiv.innerHTML = results.map((res, i) => `
-        <div class="ai-result-card" id="ai-res-\${i}">
-          <div class="activity-icon">\${CATEGORY_ICONS[res.category] || '🌱'}</div>
+        <div class="ai-result-card" id="ai-res-${i}">
+          <div class="activity-icon">${CATEGORY_ICONS[res.category] || '🌱'}</div>
           <div class="ai-res-info">
-            <div class="ai-res-label">\${res.label}</div>
-            <div class="ai-res-co2">+\${res.kgCO2} kg CO₂</div>
+            <div class="ai-res-label">${res.label}</div>
+            <div class="ai-res-co2">+${res.kgCO2} kg CO₂</div>
           </div>
           <div class="ai-result-actions">
-            <button class="ai-result-btn confirm" data-idx="\${i}" data-cat="\${res.category}" data-lbl="\${res.label}" data-co2="\${res.kgCO2}">✓</button>
-            <button class="ai-result-btn reject" data-idx="\${i}">✗</button>
+            <button class="ai-result-btn confirm" data-idx="${i}" data-cat="${res.category}" data-lbl="${res.label}" data-co2="${res.kgCO2}">✓</button>
+            <button class="ai-result-btn reject" data-idx="${i}">✗</button>
           </div>
         </div>
       `).join('');
@@ -190,12 +190,12 @@ export function init() {
     if (confirmBtn) {
       const { cat, lbl, co2, idx } = confirmBtn.dataset;
       await handleSaveActivity(cat, lbl, co2, 'ai');
-      document.getElementById(\`ai-res-\${idx}\`).remove();
+      document.getElementById(`ai-res-${idx}`).remove();
     }
 
     if (rejectBtn) {
       const idx = rejectBtn.dataset.idx;
-      document.getElementById(\`ai-res-\${idx}\`).remove();
+      document.getElementById(`ai-res-${idx}`).remove();
     }
   });
 }

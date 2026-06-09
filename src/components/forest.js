@@ -50,8 +50,8 @@ function resize() {
   canvas.width = rect.width * window.devicePixelRatio;
   canvas.height = rect.height * window.devicePixelRatio;
   ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-  canvas.style.width = \`\${rect.width}px\`;
-  canvas.style.height = \`\${rect.height}px\`;
+  canvas.style.width = `${rect.width}px`;
+  canvas.style.height = `${rect.height}px`;
   
   generateScene(); // Regenerate based on new dimensions
 }
@@ -112,7 +112,7 @@ function lerpColor(c1, c2, t) {
   const r = Math.round(r1 + (r2 - r1) * t);
   const g = Math.round(g1 + (g2 - g1) * t);
   const b = Math.round(b1 + (b2 - b1) * t);
-  return \`rgb(\${r}, \${g}, \${b})\`;
+  return `rgb(${r}, ${g}, ${b})`;
 }
 
 function animate() {
@@ -151,7 +151,7 @@ function animate() {
   }
 
   // Clouds
-  ctx.fillStyle = \`rgba(255, 255, 255, \${0.6 + (1 - healthScore) * 0.4})\`; // thicker clouds when sick
+  ctx.fillStyle = `rgba(255, 255, 255, ${0.6 + (1 - healthScore) * 0.4})`; // thicker clouds when sick
   clouds.forEach(c => {
     c.x += c.speed;
     if (c.x > width + 100) c.x = -100;
