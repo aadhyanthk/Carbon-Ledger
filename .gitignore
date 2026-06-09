@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Environment variables (API keys — never commit)
+.env
+.env.local
+.env.*.local
+
+# AI instruction files — internal build tools, not part of deliverable
+GEMINI.md
+PROJECT.md
+
+# Editor
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS
+.DS_Store
+Thumbs.db
