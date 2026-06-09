@@ -123,11 +123,11 @@ function animate() {
   ctx.clearRect(0, 0, width, height);
 
   // Background Sky
-  const skyTop हेल्दी = '#86efac';
+  const skyTopHealthy = '#86efac';
   const skyTopSick = '#d1d5db'; // gray
   const skyBot = '#f0fdf4';
   
-  const currentSkyTop = lerpColor(skyTopSick, skyTop हेल्दी, healthScore);
+  const currentSkyTop = lerpColor(skyTopSick, skyTopHealthy, healthScore);
   
   const grad = ctx.createLinearGradient(0, 0, 0, height);
   grad.addColorStop(0, currentSkyTop);
