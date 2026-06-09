@@ -88,7 +88,7 @@ export async function init() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = \`carbon_ledger_export_\${Date.now()}.json\`;
+    a.download = `carbon_ledger_export_${Date.now()}.json`;
     a.click();
     URL.revokeObjectURL(url);
     window.showToast('Data exported successfully', 'success');
