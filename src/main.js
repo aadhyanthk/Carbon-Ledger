@@ -67,19 +67,37 @@ async function navigate(path) {
     item.classList.toggle('active', item.dataset.route === path);
   });
 
-  // Load & render component
+  // ── Animated page transition ──────────────────────────────────────────────
+  const outgoing = viewRoot.firstElementChild;
+
+  // 1. Fade out current page (skip if nothing is there yet)
+  if (outgoing) {
+    outgoing.classList.add('page-exit');
+    await new Promise(r => setTimeout(r, 180)); // match CSS duration
+  }
+
+  // 2. Show loading skeleton while fetching
+  viewRoot.innerHTML = '<div class="loading-wrap"><div class="spinner"></div><span>Loading…</span></div>';
+
+  // 3. Load & render component
   try {
-    viewRoot.innerHTML = '<div class="loading-wrap"><div class="spinner"></div><span>Loading…</span></div>';
     const mod = await routes[path]();
     const html = await mod.render();
     viewRoot.innerHTML = html;
-    viewRoot.firstElementChild?.classList.add('page-enter');
+
+    // 4. Fade in new page
+    const incoming = viewRoot.firstElementChild;
+    if (incoming) {
+      incoming.classList.add('page-enter');
+    }
+
     if (typeof mod.init === 'function') mod.init();
   } catch (err) {
     console.error('Navigation error:', err);
     viewRoot.innerHTML = `<div class="empty-state"><span class="empty-icon">⚠️</span><p>Something went wrong. Please try again.</p></div>`;
   }
 }
+
 
 function getPath() {
   return window.location.hash.slice(1) || '/';

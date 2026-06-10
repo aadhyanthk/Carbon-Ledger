@@ -1326,7 +1326,15 @@ input[type="range"] {
 }
 
 .page-enter { animation: slideInUp 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-.fade-in    { animation: fadeIn 0.4s ease; }
+.page-exit  { animation: pageOut 0.18s cubic-bezier(0.4, 0, 1, 1) forwards; pointer-events: none; }
+
+@keyframes pageOut {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-8px); }
+}
+
+.fade-in { animation: fadeIn 0.4s ease; }
+
 
 /* --- Reduced motion --- */
 @media (prefers-reduced-motion: reduce) {
