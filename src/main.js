@@ -52,6 +52,11 @@ const SKEL_BLOCK = `<div class="skel-block"></div>`;
 const SKEL_LINE = (w = '100%') =>
   `<div class="skel-line" style="width:${w}"></div>`;
 
+/**
+ * Returns a skeleton loading HTML string for the given path.
+ * @param {string} path - The route path.
+ * @returns {string} The skeleton HTML.
+ */
 function getSkeletonFor(path) {
   const wrap = (inner) =>
     `<div class="page-enter" style="padding:16px;">${inner}</div>`;
@@ -117,6 +122,10 @@ function getSkeletonFor(path) {
   }
 }
 
+/**
+ * Perform SPA navigation to the requested path.
+ * @param {string} path - The route path to navigate to.
+ */
 async function navigate(path) {
   // Normalize
   if (!routes[path]) path = '/';
@@ -166,6 +175,10 @@ async function navigate(path) {
   }
 }
 
+/**
+ * Get the current hash path without the # symbol.
+ * @returns {string}
+ */
 function getPath() {
   return window.location.hash.slice(1) || '/';
 }

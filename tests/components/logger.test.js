@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render } from '../../src/components/logger.js';
-import * as carbonData from '../../src/services/carbon-data.js';
 
 vi.mock('../../src/services/carbon-data.js', () => ({
   CATEGORY_ICONS: { transport: '🚗' },

@@ -283,7 +283,7 @@ function animate() {
   if (currentStreak >= 7 && healthScore > 0.3) {
     // Birds
     ctx.fillStyle = '#1e293b'; // dark slate
-    for (let i = 0; i < 3; i++) {
+    for (let _i = 0; _i < 3; _i++) {
       const bx = ((time * 1.5 + i * 40) % (width + 100)) - 50;
       const by = 80 + Math.sin(time * 0.05 + i) * 15;
       ctx.save();

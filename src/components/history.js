@@ -4,12 +4,16 @@
 import { getTodayActivities, deleteActivity } from '../services/storage.js';
 import { CATEGORY_ICONS } from '../services/carbon-data.js';
 
+/**
+ * Render the activity history page.
+ * @returns {Promise<string>}
+ */
 export async function render() {
   const activities = await getTodayActivities();
 
   return `
     <div class="page-header">
-      <button class="back-btn" onclick="window.carbonNavigate('/')" aria-label="Go back to Dashboard">
+      <button id="btn-history-back" class="back-btn" aria-label="Go back to Dashboard">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
       <h1>Today's Activity</h1>
@@ -52,8 +56,17 @@ export async function render() {
   `;
 }
 
+/**
+ * Initializes history event handlers.
+ */
 export function init() {
   const wrap = document.querySelector('.history-wrap');
+  const backBtn = document.getElementById('btn-history-back');
+
+  if (backBtn) {
+    backBtn.addEventListener('click', () => window.carbonNavigate('/'));
+  }
+
   if (!wrap) return;
 
   wrap.addEventListener('click', async (e) => {

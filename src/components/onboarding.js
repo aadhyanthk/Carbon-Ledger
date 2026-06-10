@@ -12,6 +12,10 @@ let currentStep = 0;
 let answers = {};
 let baseline = 0;
 
+/**
+ * Render the entire onboarding wrapper.
+ * @returns {Promise<string>}
+ */
 export async function render() {
   currentStep = 0;
   answers = {};
@@ -20,29 +24,34 @@ export async function render() {
   return `
     <div class="onboarding-wrap">
       <div class="onboarding-header">
-        <div class="onboarding-progress" id="ob-progress">
-          ${ONBOARDING_QUESTIONS.map((_, i) => `<div class="progress-dot ${i === 0 ? 'active' : ''}" data-step="${i}"></div>`).join('')}
+        <div class="onboarding-progress" id="ob-progress" aria-label="Onboarding Progress">
+          ${ONBOARDING_QUESTIONS.map((_, i) => `<div class="progress-dot ${i === 0 ? 'active' : ''}" data-step="${i}" aria-hidden="true"></div>`).join('')}
         </div>
       </div>
-      <div id="ob-content" class="onboarding-step">
+      <div id="ob-content" class="onboarding-step" aria-live="polite">
         ${renderStep(0)}
       </div>
     </div>
   `;
 }
 
+/**
+ * Render a specific onboarding question step.
+ * @param {number} index - The index of the question.
+ * @returns {string}
+ */
 function renderStep(index) {
   const q = ONBOARDING_QUESTIONS[index];
   return `
-    <span class="step-emoji">${q.emoji}</span>
+    <span class="step-emoji" aria-hidden="true">${q.emoji}</span>
     <h2>${q.title}</h2>
     <p>${q.subtitle}</p>
-    <div class="option-grid">
+    <div class="option-grid" role="radiogroup" aria-label="${q.title}">
       ${q.options
         .map(
           (opt) => `
-        <div class="option-card" data-id="${opt.id}" data-step="${index}">
-          <span class="option-icon">${opt.icon}</span>
+        <div class="option-card" data-id="${opt.id}" data-step="${index}" role="radio" tabindex="0" aria-checked="false" aria-label="${opt.label}: ${opt.description}">
+          <span class="option-icon" aria-hidden="true">${opt.icon}</span>
           <span class="option-label">${opt.label}</span>
           <span class="option-value">${opt.description}</span>
         </div>
@@ -53,6 +62,10 @@ function renderStep(index) {
   `;
 }
 
+/**
+ * Render the baseline calculation results.
+ * @returns {string}
+ */
 function renderResults() {
   return `
     <div class="baseline-result fade-in">
@@ -91,15 +104,19 @@ function renderResults() {
   `;
 }
 
+/**
+ * Render the goal selection screen.
+ * @returns {string}
+ */
 function renderGoals() {
   return `
     <div class="fade-in">
       <h2>Choose your target</h2>
       <p>Set a daily carbon reduction goal. We'll build your daily budget around this.</p>
 
-      <div class="goal-cards">
-        <div class="goal-card" data-pct="5">
-          <span class="goal-icon">🌱</span>
+      <div class="goal-cards" role="radiogroup" aria-label="Carbon reduction targets">
+        <div class="goal-card" data-pct="5" role="radio" tabindex="0" aria-checked="false" aria-label="5% reduction, casual">
+          <span class="goal-icon" aria-hidden="true">🌱</span>
           <div class="goal-info">
             <h4>Casual</h4>
             <p>Easy start, small changes</p>
@@ -107,8 +124,8 @@ function renderGoals() {
           <div class="goal-pct">5%</div>
         </div>
         
-        <div class="goal-card" data-pct="15">
-          <span class="goal-icon">🌿</span>
+        <div class="goal-card" data-pct="15" role="radio" tabindex="0" aria-checked="false" aria-label="15% reduction, committed">
+          <span class="goal-icon" aria-hidden="true">🌿</span>
           <div class="goal-info">
             <h4>Committed</h4>
             <p>Noticeable impact</p>
@@ -116,8 +133,8 @@ function renderGoals() {
           <div class="goal-pct">15%</div>
         </div>
         
-        <div class="goal-card" data-pct="30">
-          <span class="goal-icon">🌳</span>
+        <div class="goal-card" data-pct="30" role="radio" tabindex="0" aria-checked="false" aria-label="30% reduction, hardcore">
+          <span class="goal-icon" aria-hidden="true">🌳</span>
           <div class="goal-info">
             <h4>Hardcore</h4>
             <p>Major lifestyle shifts</p>
@@ -131,6 +148,9 @@ function renderGoals() {
   `;
 }
 
+/**
+ * Initializes onboarding event handlers.
+ */
 export function init() {
   const content = document.getElementById('ob-content');
   const progress = document.getElementById('ob-progress');
@@ -155,8 +175,12 @@ export function init() {
 
       // Highlight selected
       const cards = content.querySelectorAll('.option-card');
-      cards.forEach((c) => c.classList.remove('selected'));
+      cards.forEach((c) => {
+        c.classList.remove('selected');
+        c.setAttribute('aria-checked', 'false');
+      });
       card.classList.add('selected');
+      card.setAttribute('aria-checked', 'true');
 
       // Save answer
       answers[q.id] = card.dataset.id;
@@ -196,8 +220,12 @@ export function init() {
     const goalCard = e.target.closest('.goal-card');
     if (goalCard) {
       const cards = content.querySelectorAll('.goal-card');
-      cards.forEach((c) => c.classList.remove('selected'));
+      cards.forEach((c) => {
+        c.classList.remove('selected');
+        c.setAttribute('aria-checked', 'false');
+      });
       goalCard.classList.add('selected');
+      goalCard.setAttribute('aria-checked', 'true');
 
       selectedGoalPct = parseInt(goalCard.dataset.pct, 10);
       document.getElementById('ob-finish').disabled = false;
@@ -213,6 +241,17 @@ export function init() {
         onboardingComplete: true,
       });
       window.carbonNavigate('/');
+    }
+  });
+
+  // Handle keyboard events
+  content.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      const card = e.target.closest('.option-card') || e.target.closest('.goal-card');
+      if (card) {
+        e.preventDefault();
+        card.click();
+      }
     }
   });
 }

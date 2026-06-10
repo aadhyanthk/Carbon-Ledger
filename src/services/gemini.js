@@ -3,8 +3,6 @@
  * Wrapper for Google Generative AI with structured prompts and fallback handling.
  */
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { EMISSION_FACTORS } from './carbon-data.js';
-
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 let genAI = null;

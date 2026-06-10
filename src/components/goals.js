@@ -14,9 +14,15 @@ import {
 } from '../services/storage.js';
 import { escapeHtml } from '../utils/sanitize.js';
 
+/** @type {import('../services/storage.js').Goal[]} */
 let goals = [];
+/** @type {import('../services/storage.js').Streak} */
 let streak = null;
 
+/**
+ * Render the entire Goals page.
+ * @returns {Promise<string>}
+ */
 export async function render() {
   goals = await getGoals();
   streak = await getStreak();
@@ -31,7 +37,7 @@ export async function render() {
 
   return `
     <div class="page-header">
-      <button class="back-btn" onclick="window.carbonNavigate('/')" aria-label="Go back">
+      <button id="btn-goals-back" class="back-btn" aria-label="Go back">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
       <h1>Goals</h1>
@@ -64,7 +70,7 @@ export async function render() {
           .map(
             (g) => `
           <div class="challenge-card" style="opacity:0.7">
-            <span style="font-size:1.5rem; margin-right:12px;">✅</span>
+            <span style="font-size:1.5rem; margin-right:12px;" aria-hidden="true">✅</span>
             <div>
               <div class="challenge-title">${escapeHtml(g.title)}</div>
               <div class="challenge-meta">Saved ${g.totalSavingKg} kg CO₂</div>
@@ -81,6 +87,11 @@ export async function render() {
   `;
 }
 
+/**
+ * Renders an active goal card.
+ * @param {Object} goal - The active goal object.
+ * @returns {string}
+ */
 function renderActiveGoal(goal) {
   const pack = CHALLENGE_PACKS.find((p) => p.id === goal.id);
   if (!pack) return '';
@@ -102,7 +113,7 @@ function renderActiveGoal(goal) {
           <circle class="progress-ring-fill" stroke-width="4" fill="transparent" r="${radius}" cx="25" cy="25" 
                   stroke-dasharray="${circ}" stroke-dashoffset="${offset}"/>
         </svg>
-        <div style="position:absolute; margin-top:-35px; margin-left:14px; font-size:1rem;">${pack.emoji}</div>
+        <div style="position:absolute; margin-top:-35px; margin-left:14px; font-size:1rem;" aria-hidden="true">${pack.emoji}</div>
       </div>
       
       <div class="challenge-info">
@@ -132,10 +143,15 @@ function renderActiveGoal(goal) {
   `;
 }
 
+/**
+ * Renders an available challenge pack.
+ * @param {Object} pack - The challenge pack.
+ * @returns {string}
+ */
 function renderAvailablePack(pack) {
   return `
-    <div class="challenge-card" style="cursor:pointer;" onclick="window.startPack('${pack.id}')">
-      <div style="font-size:2rem; margin-right:12px;">${pack.emoji}</div>
+    <div class="challenge-card pack-card" data-pack="${pack.id}" role="button" tabindex="0" aria-label="Start ${pack.title}">
+      <div style="font-size:2rem; margin-right:12px;" aria-hidden="true">${pack.emoji}</div>
       <div class="challenge-info">
         <div class="challenge-title">${escapeHtml(pack.title)}</div>
         <div class="challenge-meta">${escapeHtml(pack.description)}</div>
@@ -148,20 +164,17 @@ function renderAvailablePack(pack) {
   `;
 }
 
-// Attach to window so onclick works in string template
-window.startPack = async (packId) => {
-  const pack = CHALLENGE_PACKS.find((p) => p.id === packId);
-  if (pack) {
-    await startChallenge(pack);
-    window.showToast(`Started challenge: ${pack.title}`, 'success');
-    const mod = await import('./goals.js');
-    document.getElementById('view-root').innerHTML = await mod.render();
-    mod.init();
-  }
-};
-
+/**
+ * Initializes goals event handlers.
+ */
 export function init() {
   const wrap = document.querySelector('.goals-wrap');
+  const backBtn = document.getElementById('btn-goals-back');
+
+  if (backBtn) {
+    backBtn.addEventListener('click', () => window.carbonNavigate('/'));
+  }
+
   if (!wrap) return;
 
   wrap.addEventListener('change', async (e) => {
@@ -176,13 +189,31 @@ export function init() {
 
       // Re-render to update rings
       const mod = await import('./goals.js');
-      document.getElementById('view-root').innerHTML = await mod.render();
+      const root = document.getElementById('view-root');
+      if (root) root.innerHTML = await mod.render();
       mod.init();
       window.showToast('Great job!', 'info', 1500);
     }
   });
 
   wrap.addEventListener('click', async (e) => {
+    // Start pack
+    const packCard = e.target.closest('.pack-card');
+    if (packCard) {
+      const packId = packCard.dataset.pack;
+      const pack = CHALLENGE_PACKS.find((p) => p.id === packId);
+      if (pack) {
+        await startChallenge(pack);
+        window.showToast(`Started challenge: ${pack.title}`, 'success');
+        const mod = await import('./goals.js');
+        const root = document.getElementById('view-root');
+        if (root) root.innerHTML = await mod.render();
+        mod.init();
+      }
+      return;
+    }
+
+    // Claim reward
     if (e.target.classList.contains('btn-claim')) {
       const goalId = e.target.dataset.goal;
       await markGoalComplete(goalId);
@@ -198,16 +229,30 @@ export function init() {
 
       // Re-render
       const mod = await import('./goals.js');
-      document.getElementById('view-root').innerHTML = await mod.render();
+      const root = document.getElementById('view-root');
+      if (root) root.innerHTML = await mod.render();
       mod.init();
-    } else if (e.target.classList.contains('btn-retake')) {
+    } 
+    // Retake challenge
+    else if (e.target.classList.contains('btn-retake')) {
       const goalId = e.target.dataset.goal;
       await deleteGoal(goalId);
       window.showToast('Challenge available to retake!', 'info');
 
       const mod = await import('./goals.js');
-      document.getElementById('view-root').innerHTML = await mod.render();
+      const root = document.getElementById('view-root');
+      if (root) root.innerHTML = await mod.render();
       mod.init();
+    }
+  });
+
+  wrap.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      const packCard = e.target.closest('.pack-card');
+      if (packCard) {
+        e.preventDefault();
+        packCard.click();
+      }
     }
   });
 }

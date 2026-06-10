@@ -69,6 +69,10 @@ const BADGES = [
   },
 ];
 
+/**
+ * Render the streaks and achievements page.
+ * @returns {Promise<string>}
+ */
 export async function render() {
   const [streak, achievements, tickets, activities] = await Promise.all([
     getStreak(),
@@ -82,7 +86,7 @@ export async function render() {
 
   return `
     <div class="page-header">
-      <button class="back-btn" onclick="window.carbonNavigate('/')" aria-label="Go back">
+      <button id="btn-streaks-back" class="back-btn" aria-label="Go back">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
       <h1>Achievements</h1>
@@ -137,7 +141,12 @@ export async function render() {
   `;
 }
 
-// Simple passive checks
+/**
+ * Simple passive checks for achievements.
+ * @param {import('../services/storage.js').Streak} streak
+ * @param {import('../services/storage.js').Activity[]} activities
+ * @param {string[]} unlockedList
+ */
 async function checkAchievements(streak, activities, unlockedList) {
   import('../services/storage.js').then(async ({ unlockAchievement }) => {
     if (activities.length > 0 && !unlockedList.includes('first_log')) {
@@ -171,8 +180,16 @@ async function checkAchievements(streak, activities, unlockedList) {
   });
 }
 
+/**
+ * Initializes streak and achievement event handlers.
+ */
 export function init() {
   const btnLottery = document.getElementById('btn-lottery');
+  const backBtn = document.getElementById('btn-streaks-back');
+
+  if (backBtn) {
+    backBtn.addEventListener('click', () => window.carbonNavigate('/'));
+  }
 
   if (btnLottery) {
     btnLottery.addEventListener('click', async () => {

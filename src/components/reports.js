@@ -36,10 +36,14 @@ let donutChart = null;
 let lineChart = null;
 let currentPeriod = 'week'; // 'week', 'month', 'all'
 
+/**
+ * Render the entire reports page.
+ * @returns {Promise<string>}
+ */
 export async function render() {
   return `
     <div class="page-header">
-      <button class="back-btn" onclick="window.carbonNavigate('/')" aria-label="Go back">
+      <button id="btn-reports-back" class="back-btn" aria-label="Go back">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
       <h1>Reports</h1>
@@ -83,6 +87,11 @@ export async function render() {
   `;
 }
 
+/**
+ * Calculate the timestamp range for a given period.
+ * @param {string} period - 'week', 'month', or 'all'
+ * @returns {{from: number}}
+ */
 function getPeriodRange(period) {
   const now = new Date();
   if (period === 'week') {
@@ -95,8 +104,16 @@ function getPeriodRange(period) {
   return { from: now.getTime() };
 }
 
+/**
+ * Initializes reports event handlers.
+ */
 export async function init() {
   await loadDataAndRender();
+
+  const backBtn = document.getElementById('btn-reports-back');
+  if (backBtn) {
+    backBtn.addEventListener('click', () => window.carbonNavigate('/'));
+  }
 
   // Period switching
   const selector = document.querySelector('.period-selector');
@@ -166,6 +183,10 @@ export async function init() {
   });
 }
 
+/**
+ * Load data and render all report subcomponents.
+ * @returns {Promise<void>}
+ */
 async function loadDataAndRender() {
   const profile = await getProfile();
   const range = getPeriodRange(currentPeriod);
@@ -207,7 +228,7 @@ async function loadDataAndRender() {
   const insightContainer = document.getElementById('ai-insight-container');
   if (activities.length > 0) {
     insightContainer.innerHTML =
-      '<div class="text-center text-muted mb-16"><div class="spinner"></div> Generating insight...</div>';
+      '<div class="text-center text-muted mb-16" aria-live="polite"><div class="spinner"></div> Generating insight...</div>';
 
     const insightText = await getInsight({
       totalKg,
@@ -218,7 +239,7 @@ async function loadDataAndRender() {
     });
 
     insightContainer.innerHTML = `
-      <div class="ai-insight-card fade-in">
+      <div class="ai-insight-card fade-in" aria-live="polite">
         <h3>✨ AI Insight</h3>
         <p>${escapeHtml(insightText)}</p>
       </div>
@@ -228,6 +249,10 @@ async function loadDataAndRender() {
   }
 }
 
+/**
+ * Render the doughnut chart for categories.
+ * @param {Record<string, number>} catTotals - Category totals map.
+ */
 function renderDonutChart(catTotals) {
   const ctx = document.getElementById('donut-chart');
   if (donutChart) donutChart.destroy();
@@ -274,6 +299,11 @@ function renderDonutChart(catTotals) {
   });
 }
 
+/**
+ * Render the daily line chart.
+ * @param {Record<string, number>} dailyTotals - Daily totals map.
+ * @param {number} dailyBudget - The user's daily budget.
+ */
 function renderLineChart(dailyTotals, dailyBudget) {
   const wrap = document.getElementById('line-chart')?.parentElement;
   if (!wrap) return;
@@ -328,6 +358,12 @@ function renderLineChart(dailyTotals, dailyBudget) {
   });
 }
 
+/**
+ * Render the carbon statement list.
+ * @param {Array<Object>} activities - Array of activity objects.
+ * @param {number} totalKg - Total emissions.
+ * @param {number} periodBudget - Total budget for the period.
+ */
 function renderStatement(activities, totalKg, periodBudget) {
   const container = document.getElementById('carbon-statement');
 

@@ -1,7 +1,7 @@
 /**
  * CarbonLedger — Dashboard Component
  */
-import { initForest, updateForestHealth, cleanupForest } from './forest.js';
+import { initForest, cleanupForest } from './forest.js';
 import {
   getProfile,
   getTodayTotal,

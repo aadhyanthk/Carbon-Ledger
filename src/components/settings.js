@@ -3,12 +3,16 @@
  */
 import { clearAllData, getProfile } from '../services/storage.js';
 
+/**
+ * Render the settings and profile page.
+ * @returns {Promise<string>}
+ */
 export async function render() {
   const profile = await getProfile();
 
   return `
     <div class="page-header">
-      <button class="back-btn" onclick="window.carbonNavigate('/')" aria-label="Go back">
+      <button id="btn-settings-back" class="back-btn" aria-label="Go back">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
       <h1>Profile & Settings</h1>
@@ -96,8 +100,16 @@ export async function render() {
   `;
 }
 
+/**
+ * Initializes settings event handlers.
+ */
 export function init() {
   const modal = document.getElementById('modal-profile');
+  const backBtn = document.getElementById('btn-settings-back');
+
+  if (backBtn) {
+    backBtn.addEventListener('click', () => window.carbonNavigate('/'));
+  }
 
   // Dark mode toggle
   const themeSwitch = document.getElementById('theme-switch');
