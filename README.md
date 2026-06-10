@@ -146,8 +146,10 @@ flowchart LR
 
 ## 🌍 Deployment
 
-CarbonLedger is optimized for zero-config deployment on Edge networks like **Vercel**:
+### Vercel Deployment
 1. Connect your GitHub repository to Vercel.
-2. The Build Command defaults to `npm run build` and Output Directory to `dist`.
-3. Add your `VITE_GEMINI_API_KEY` to the Vercel Environment Variables.
+2. The framework preset should automatically be detected as **Vite**.
+3. **Environment Variables:**
+   - In your Vercel project settings, add an environment variable named `GEMINI_API_KEY` with your API key. 
+   - **Crucial Security Note:** Do NOT prefix it with `VITE_` in Vercel. CarbonLedger uses a secure Vercel Serverless Function (`api/gemini.js`) to proxy all API requests in production. If you use `VITE_GEMINI_API_KEY`, Vite will embed the key into the client-side JavaScript bundle, making it visible to anyone. By using `GEMINI_API_KEY`, the key safely stays on the server.
 4. Deploy!

@@ -10,6 +10,25 @@ const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 let genAI = null;
 
 async function generateWithFallback(prompt) {
+  // If no API key is embedded in the frontend bundle (production), use the secure Vercel Edge proxy
+  if (!API_KEY) {
+    const response = await fetch('/api/gemini', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt })
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Failed to fetch from Gemini proxy');
+    }
+    
+    const data = await response.json();
+    // Return an object that matches the SDK's expected structure so the rest of the code works
+    return { response: { text: () => data.text } };
+  }
+
+  // Local development: use the embedded key directly
   if (!genAI) genAI = new GoogleGenerativeAI(API_KEY);
   
   const modelsToTry = [
