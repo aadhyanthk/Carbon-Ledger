@@ -56,7 +56,7 @@ export async function render() {
       </div>
 
       <div class="dashboard-content">
-        <div class="card mb-8" style="padding: 12px 20px;">
+        <div class="card" style="padding: 12px 20px;">
           <div class="flex items-center justify-between">
             <div class="section-title" style="margin:0;">Current Streak</div>
             <div class="streak-badge">
@@ -65,7 +65,7 @@ export async function render() {
           </div>
         </div>
 
-        <div class="card mb-24">
+        <div class="card">
           <div class="flex items-center justify-between mb-12">
             <div class="section-title" style="margin:0;">Today's Activity</div>
             <a href="#/history" class="text-green font-outfit fw-semibold" style="text-decoration:none;font-size:0.875rem;">See all</a>
