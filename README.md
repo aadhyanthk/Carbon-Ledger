@@ -28,13 +28,11 @@
 ## 📸 App Gallery
 
 <p align="center">
-  <img src="https://placehold.co/240x480/166534/ffffff.png?text=Welcome+Screen" width="20%" alt="Welcome">
-  <img src="https://placehold.co/240x480/166534/ffffff.png?text=Living+Forest" width="20%" alt="Dashboard">
-  <img src="https://placehold.co/240x480/166534/ffffff.png?text=AI+Smart+Log" width="20%" alt="Logger">
-  <img src="https://placehold.co/240x480/166534/ffffff.png?text=Carbon+Statement" width="20%" alt="Reports">
+  <img src="docs/welcome.png" width="20%" alt="Welcome">
+  <img src="docs/dashboard.png" width="20%" alt="Dashboard">
+  <img src="docs/logger.png" width="20%" alt="Logger">
+  <img src="docs/reports.png" width="20%" alt="Reports">
 </p>
-
-*(Note: Screenshots are placeholders. Please visit the live demo to experience the responsive UI, glassmorphism, and dark mode!)*
 
 ---
 
