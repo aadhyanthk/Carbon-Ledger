@@ -15,7 +15,6 @@ const routes = {
   '/history':      () => import('./components/history.js'),
   '/goals':        () => import('./components/goals.js'),
   '/reports':      () => import('./components/reports.js'),
-  '/simulator':    () => import('./components/simulator.js'),
   '/achievements': () => import('./components/streaks.js'),
   '/settings':     () => import('./components/settings.js'),
 };

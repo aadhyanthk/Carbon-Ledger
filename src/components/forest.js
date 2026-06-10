@@ -14,13 +14,23 @@ let particles = [];
 let clouds = [];
 let lastWidth = 0;
 
+let resizeObserver;
+
 export function initForest(canvasElement, initialHealth = 1) {
   canvas = canvasElement;
   ctx = canvas.getContext('2d');
   healthScore = initialHealth;
   
-  resize();
-  window.addEventListener('resize', resize);
+  if (resizeObserver) resizeObserver.disconnect();
+  
+  resizeObserver = new ResizeObserver((entries) => {
+    for (let entry of entries) {
+      if (entry.contentRect.width > 0) {
+        resize();
+      }
+    }
+  });
+  resizeObserver.observe(canvas.parentElement);
   
   generateScene();
   
@@ -249,5 +259,7 @@ export function cleanupForest() {
   if (animationFrameId) {
     cancelAnimationFrame(animationFrameId);
   }
-  window.removeEventListener('resize', resize);
+  if (resizeObserver) {
+    resizeObserver.disconnect();
+  }
 }

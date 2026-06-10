@@ -17,8 +17,7 @@ export async function render() {
     <div class="settings-wrap fade-in">
       
       <div class="card mb-24 text-center">
-        <div style="font-size:3rem; margin-bottom:8px;" id="profile-avatar">${profile.avatar || '🧑‍🌾'}</div>
-        <h2 style="margin-bottom:4px;" id="profile-name">${profile.name || 'Carbon Guardian'}</h2>
+        <div style="font-size:3rem; margin-bottom:8px;" id="profile-avatar">${profile.avatar || '🌍'}</div>
         <p class="text-muted" style="font-size:0.875rem;">Member since ${new Date(profile?.createdAt || Date.now()).toLocaleDateString()}</p>
         
         <div class="mt-16 flex justify-between items-center" style="background:var(--green-50); padding: 12px; border-radius: var(--radius-sm); text-align:left;">
@@ -42,10 +41,7 @@ export async function render() {
           <div class="row-chevron">›</div>
         </div>
         
-        <div class="settings-row" onclick="window.carbonNavigate('/simulator')" role="button" tabindex="0">
-          <div class="row-label">What-If Simulator</div>
-          <div class="row-chevron">›</div>
-        </div>
+
       </div>
 
       <div class="settings-section">
@@ -72,18 +68,16 @@ export async function render() {
     <!-- Profile Edit Modal -->
     <div id="modal-profile" class="hidden" style="position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:300; display:flex; align-items:center; justify-content:center;">
       <div class="card" style="width:90%; max-width:320px;">
-        <h3>Edit Profile</h3>
-        <div style="margin:16px 0;">
-          <label style="display:block; font-size:0.875rem; color:var(--text-muted); margin-bottom:4px;">Display Name</label>
-          <input type="text" id="input-name" class="ai-input" style="min-height:40px; padding:8px 12px;" value="${profile?.name || ''}" placeholder="e.g. Alex">
-        </div>
-        <div style="margin:16px 0;">
-          <label style="display:block; font-size:0.875rem; color:var(--text-muted); margin-bottom:4px;">Avatar Emoji</label>
-          <input type="text" id="input-avatar" class="ai-input" style="min-height:40px; padding:8px 12px; font-size:1.5rem; text-align:center;" value="${profile?.avatar || '🧑‍🌾'}">
+        <h3>Choose Avatar</h3>
+        <div style="margin:16px 0; display:grid; grid-template-columns:repeat(3, 1fr); gap:8px;">
+          ${['🌍', '🍁', '🌲', '🌸', '🍄', '🦊', '🦉', '🐝', '🧑‍🌾'].map(emoji => `
+            <button class="btn btn-secondary btn-avatar-pick" style="font-size:1.5rem; padding:12px; ${profile.avatar === emoji ? 'border-color:var(--green-600);' : ''}" data-emoji="${emoji}">
+              ${emoji}
+            </button>
+          `).join('')}
         </div>
         <div class="flex" style="gap:8px; justify-content:flex-end;">
           <button class="btn btn-ghost btn-sm" id="btn-close-modal">Cancel</button>
-          <button class="btn btn-primary btn-sm" id="btn-save-profile">Save</button>
         </div>
       </div>
     </div>
@@ -101,17 +95,22 @@ export function init() {
     modal.classList.add('hidden');
   });
   
-  document.getElementById('btn-save-profile')?.addEventListener('click', async () => {
-    const { getProfile, setProfile } = await import('../services/storage.js');
-    const p = await getProfile();
-    p.name = document.getElementById('input-name').value.trim();
-    p.avatar = document.getElementById('input-avatar').value.trim() || '🧑‍🌾';
-    await setProfile(p);
-    
-    document.getElementById('profile-name').textContent = p.name || 'Carbon Guardian';
-    document.getElementById('profile-avatar').textContent = p.avatar;
-    modal.classList.add('hidden');
-    window.showToast('Profile updated!', 'success');
+  document.querySelectorAll('.btn-avatar-pick').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      const emoji = e.currentTarget.dataset.emoji;
+      const { getProfile, setProfile } = await import('../services/storage.js');
+      const p = await getProfile();
+      p.avatar = emoji;
+      await setProfile(p);
+      
+      document.getElementById('profile-avatar').textContent = emoji;
+      modal.classList.add('hidden');
+      window.showToast('Avatar updated!', 'success');
+      
+      // Update styling to reflect active pick
+      document.querySelectorAll('.btn-avatar-pick').forEach(b => b.style.borderColor = '');
+      e.currentTarget.style.borderColor = 'var(--green-600)';
+    });
   });
   document.getElementById('btn-recalibrate')?.addEventListener('click', () => {
     if (confirm('This will restart the onboarding quiz to set a new baseline. Your logged activities and streaks will be kept. Continue?')) {
