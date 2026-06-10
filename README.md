@@ -1,6 +1,26 @@
 # 🌿 Carbon-Ledger
 
+[![Vite](https://img.shields.io/badge/vite-%23646CFF.svg?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Vanilla JS](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[![Gemini API](https://img.shields.io/badge/Gemini%20API-8E75B2?style=for-the-badge&logo=googlebard&logoColor=white)](https://ai.google.dev/)
+[![Deploy Status](https://img.shields.io/badge/Vercel-Deployed-166534?style=for-the-badge&logo=vercel&logoColor=white)](https://carbon-ledger.vercel.app/)
+
+> **[🌍 Live Demo: carbon-ledger.vercel.app](https://carbon-ledger.vercel.app/)**
+
 **Carbon-Ledger** is a state-of-the-art, client-side progressive web app (PWA) designed to track, analyze, and reduce your daily carbon footprint. Built entirely as an intelligent, serverless Single Page Application (SPA), it empowers users through gamification, interactive data visualizations, and AI-driven insights—all completely local and private.
+
+## 📱 App Gallery
+
+*(Judges: See the live demo above to experience the animations and full UI!)*
+
+<p align="center">
+  <img src="https://placehold.co/240x480/166534/ffffff.png?text=Welcome+Screen" width="20%" alt="Welcome">
+  <img src="https://placehold.co/240x480/166534/ffffff.png?text=Living+Forest" width="20%" alt="Dashboard">
+  <img src="https://placehold.co/240x480/166534/ffffff.png?text=AI+Smart+Log" width="20%" alt="Logger">
+  <img src="https://placehold.co/240x480/166534/ffffff.png?text=Carbon+Statement" width="20%" alt="Reports">
+</p>
+
+*(Note to dev: Replace the placehold.co links with actual screenshots in `docs/` before submission)*
 
 ## ✨ Key Features
 
