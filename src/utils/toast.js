@@ -1,6 +1,7 @@
 /**
  * Toast notification utility
  */
+import { escapeHtml } from './sanitize.js';
 
 /**
  * Show a toast notification
@@ -27,10 +28,3 @@ export function showToast(message, type = 'success', duration = 3000) {
   }, duration);
 }
 
-function escapeHtml(str) {
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}

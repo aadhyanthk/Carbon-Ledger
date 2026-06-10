@@ -4,6 +4,7 @@
 import { initForest, updateForestHealth, cleanupForest } from './forest.js';
 import { getProfile, getTodayTotal, getTodayActivities, getStreak, getGoals } from '../services/storage.js';
 import { getDailyBudget, CATEGORY_ICONS } from '../services/carbon-data.js';
+import { escapeHtml } from '../utils/sanitize.js';
 
 let profile, budget, todayTotal, streak, goals;
 
@@ -77,8 +78,8 @@ export async function render() {
             `<ul class="activity-list">
               ${activities.slice(0, 5).map(a => `
                 <li class="activity-item">
-                  <div class="activity-icon">${CATEGORY_ICONS[a.category] || '🌱'}</div>
-                  <div class="activity-label">${a.label}</div>
+                  <div class="activity-icon">${escapeHtml(CATEGORY_ICONS[a.category] || '🌱')}</div>
+                  <div class="activity-label">${escapeHtml(a.label)}</div>
                   <div class="activity-co2">${a.kgCO2.toFixed(1)} kg</div>
                 </li>
               `).join('')}
@@ -227,12 +228,12 @@ function initSimulator() {
         <div class="ai-result-card" style="align-items:flex-start;">
           <div class="activity-icon" style="background: ${isPositive ? 'var(--green-100)' : '#fee2e2'}">${isPositive ? '🌿' : '⚠️'}</div>
           <div class="ai-res-info">
-            <p style="font-size:0.9rem; margin-bottom:8px;">${res.summary}</p>
+            <p style="font-size:0.9rem; margin-bottom:8px;">${escapeHtml(res.summary)}</p>
             <div class="flex items-center gap-12 mt-8">
               <span style="font-family:'Outfit'; font-weight:700; color:${isPositive ? 'var(--green-700)' : 'var(--red-500)'}">
-                ${isPositive ? '-' : '+'}${Math.abs(res.annualSavingKg)} kg/yr
+                ${isPositive ? '-' : '+'}${escapeHtml(Math.abs(res.annualSavingKg))} kg/yr
               </span>
-              <span style="font-size:0.8rem; color:var(--text-muted)">${res.equivalent}</span>
+              <span style="font-size:0.8rem; color:var(--text-muted)">${escapeHtml(res.equivalent)}</span>
             </div>
           </div>
         </div>

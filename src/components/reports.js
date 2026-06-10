@@ -5,6 +5,7 @@ import { getActivities, getProfile } from '../services/storage.js';
 import { getDailyBudget, CATEGORY_ICONS } from '../services/carbon-data.js';
 import { getInsight } from '../services/gemini.js';
 import Chart from 'chart.js/auto';
+import { escapeHtml } from '../utils/sanitize.js';
 
 let donutChart = null;
 let lineChart = null;
@@ -139,7 +140,7 @@ async function loadDataAndRender() {
     insightContainer.innerHTML = `
       <div class="ai-insight-card fade-in">
         <h3>✨ AI Insight</h3>
-        <p>${insightText}</p>
+        <p>${escapeHtml(insightText)}</p>
       </div>
     `;
   } else {
@@ -268,7 +269,7 @@ function renderStatement(activities, totalKg, periodBudget) {
         <div class="statement-row">
           <div class="stmt-icon">${CATEGORY_ICONS[a.category] || '📊'}</div>
           <div class="stmt-info">
-            <div class="stmt-label">${a.label}</div>
+            <div class="stmt-label">${escapeHtml(a.label)}</div>
             <div class="stmt-date">${new Date(a.timestamp).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
           </div>
           <div class="stmt-co2">${a.kgCO2.toFixed(1)}</div>
