@@ -41,10 +41,10 @@ export async function render() {
           <div class="theme-toggle-switch" id="theme-switch"></div>
         </button>
 
-        <div class="settings-row" id="btn-recalibrate" role="button" tabindex="0">
+        <button class="settings-row" id="btn-recalibrate" aria-label="Recalibrate Baseline">
           <div class="row-label">Recalibrate Baseline</div>
           <div class="row-chevron">›</div>
-        </div>
+        </button>
         
 
       </div>
@@ -52,15 +52,15 @@ export async function render() {
       <div class="settings-section">
         <h3>Data</h3>
         
-        <div class="settings-row" id="btn-export-data" role="button" tabindex="0">
+        <button class="settings-row" id="btn-export-data" aria-label="Export Data">
           <div class="row-label">Export Data (JSON)</div>
           <div class="row-chevron">›</div>
-        </div>
+        </button>
         
-        <div class="settings-row" id="btn-clear-data" role="button" tabindex="0" style="color: var(--red-500);">
+        <button class="settings-row" id="btn-clear-data" aria-label="Delete Account & Data" style="color: var(--red-500);">
           <div class="row-label">Delete Account & Data</div>
           <div class="row-chevron">›</div>
-        </div>
+        </button>
       </div>
       
       <div class="text-center text-muted mt-24" style="font-size: 0.75rem;">

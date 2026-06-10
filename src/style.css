@@ -1227,10 +1227,14 @@ input[type="range"] {
   margin-bottom: 8px;
   box-shadow: var(--shadow-xs);
   cursor: pointer;
+  border: none;
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
   transition: background var(--transition-fast);
 }
 .settings-row:hover { background: var(--green-50); }
-.settings-row .row-label { font-weight: 500; font-size: 0.9375rem; }
+.settings-row .row-label { font-weight: 500; font-size: 0.9375rem; color: inherit; }
 .settings-row .row-chevron { color: var(--text-muted); }
 
 /* --- Page header --- */

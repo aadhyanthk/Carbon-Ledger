@@ -5,6 +5,7 @@ import { PRESETS, CATEGORY_ICONS, getDailyBudget } from '../services/carbon-data
 import { addActivity, updateStreak, getProfile, getTodayTotal } from '../services/storage.js';
 import { parseActivity } from '../services/gemini.js';
 import { escapeHtml } from '../utils/sanitize.js';
+import { playSound } from '../utils/audio.js';
 
 let currentTab = 'quick'; // 'quick' | 'smart'
 let selectedCategory = 'transport'; // for quick log
@@ -99,6 +100,7 @@ async function handleSaveActivity(category, label, kgCO2, source = 'manual') {
   
   await updateStreak(underBudget);
 
+  playSound('ching');
   window.showToast(`Logged: ${label} (+${kgCO2} kg)`, 'success');
 }
 

@@ -2,6 +2,7 @@
  * CarbonLedger — Goals & Challenges Component
  */
 import { CHALLENGE_PACKS } from '../services/carbon-data.js';
+import { playSound } from '../utils/audio.js';
 import { fireConfetti } from '../utils/confetti.js';
 import { getGoals, startChallenge, completeGoalItem, markGoalComplete, deleteGoal, getStreak } from '../services/storage.js';
 
@@ -143,6 +144,8 @@ export function init() {
       e.target.disabled = true; // disable immediately
       await completeGoalItem(goalId, itemId);
       
+      playSound('pop');
+      
       // Re-render to update rings
       const mod = await import('./goals.js');
       document.getElementById('view-root').innerHTML = await mod.render();
@@ -161,8 +164,9 @@ export function init() {
       streak.freezes += 1;
       await setStreak(streak);
       
+      window.showToast('Pack completed! +1 Streak Freeze earned.', 'success');
+      playSound('fanfare');
       fireConfetti();
-      window.showToast('Challenge Complete! Earned 1 Streak Freeze ❄️', 'success');
       
       // Re-render
       const mod = await import('./goals.js');
