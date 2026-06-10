@@ -46,7 +46,10 @@ export async function render() {
           <div class="row-chevron">›</div>
         </button>
         
-
+        <button class="settings-row" id="btn-invite-friends" aria-label="Invite Friends">
+          <div class="row-label">🌱 Invite Friends</div>
+          <div class="row-chevron">›</div>
+        </button>
       </div>
 
       <div class="settings-section">
@@ -138,6 +141,24 @@ export function init() {
   document.getElementById('btn-recalibrate')?.addEventListener('click', () => {
     if (confirm('This will restart the onboarding quiz to set a new baseline. Your logged activities and streaks will be kept. Continue?')) {
       window.carbonNavigate('/onboarding');
+    }
+  });
+
+  document.getElementById('btn-invite-friends')?.addEventListener('click', async () => {
+    const SHARE_TEXT = `🌍 I'm tracking my carbon footprint on CarbonLedger to help the planet. Join me and let's grow a forest together! Try it free: https://co-ledger.vercel.app/`;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: 'CarbonLedger', text: SHARE_TEXT, url: 'https://co-ledger.vercel.app/' });
+      } catch (e) {
+        if (e.name !== 'AbortError') fallback();
+      }
+    } else {
+      fallback();
+    }
+    function fallback() {
+      navigator.clipboard.writeText(SHARE_TEXT).then(() => {
+        window.showToast('Link copied to clipboard!', 'success');
+      });
     }
   });
 

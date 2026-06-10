@@ -58,7 +58,13 @@ export async function render() {
       <div class="dashboard-content">
         <div class="card" style="padding: 12px 20px;">
           <div class="flex items-center justify-between">
-            <div class="section-title" style="margin:0;">Current Streak</div>
+            <div>
+              <div class="section-title" style="margin:0;">Current Streak</div>
+              <button class="btn btn-ghost btn-sm mt-8" id="btn-share-impact" style="padding: 4px 8px; font-size: 0.75rem;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;margin-right:4px;"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                Share impact
+              </button>
+            </div>
             <div class="streak-badge">
               ${streak.current} ${streak.current > 0 ? '🔥' : '🧊'}
             </div>
@@ -162,6 +168,24 @@ export function init() {
 
   // Simulator Initialization
   initSimulator();
+
+  document.getElementById('btn-share-impact')?.addEventListener('click', async () => {
+    const SHARE_TEXT = `🔥 I'm on a ${streak.current}-day streak on CarbonLedger, tracking my carbon footprint daily! Join me: https://co-ledger.vercel.app/`;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: 'My CarbonLedger Streak', text: SHARE_TEXT, url: 'https://co-ledger.vercel.app/' });
+      } catch (e) {
+        if (e.name !== 'AbortError') fallback();
+      }
+    } else {
+      fallback();
+    }
+    function fallback() {
+      navigator.clipboard.writeText(SHARE_TEXT).then(() => {
+        window.showToast('Copied to clipboard!', 'success');
+      });
+    }
+  });
 }
 
 function initSimulator() {
