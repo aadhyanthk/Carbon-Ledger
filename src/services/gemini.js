@@ -8,14 +8,30 @@ import { EMISSION_FACTORS } from './carbon-data.js';
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 let genAI = null;
-let model = null;
 
-function getModel() {
-  if (!model) {
-    genAI = new GoogleGenerativeAI(API_KEY);
-    model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+async function generateWithFallback(prompt) {
+  if (!genAI) genAI = new GoogleGenerativeAI(API_KEY);
+  
+  const modelsToTry = [
+    'gemini-2.5-flash',
+    'gemini-2.5-flash-lite',
+    'gemini-flash-latest'
+  ];
+  
+  let lastError;
+  for (const modelName of modelsToTry) {
+    try {
+      const model = genAI.getGenerativeModel({ model: modelName });
+      const result = await model.generateContent(prompt);
+      return result;
+    } catch (err) {
+      console.warn(`[Gemini] ${modelName} failed:`, err.message);
+      lastError = err;
+      // Abort immediately on auth errors
+      if (err.status === 401 || err.status === 403) throw err;
+    }
   }
-  return model;
+  throw lastError;
 }
 
 // ── Activity Parser ───────────────────────────────────────────────────────────
@@ -54,7 +70,7 @@ Rules:
 - Return ONLY valid JSON, nothing else`;
 
   try {
-    const result = await getModel().generateContent(prompt);
+    const result = await generateWithFallback(prompt);
     const text   = result.response.text().trim();
 
     // Strip markdown code fences if present
@@ -101,7 +117,7 @@ Rules:
 - If under budget, celebrate it`;
 
   try {
-    const result = await getModel().generateContent(prompt);
+    const result = await generateWithFallback(prompt);
     return result.response.text().trim();
   } catch (err) {
     console.error('Gemini getInsight error:', err);
@@ -139,7 +155,7 @@ Base your calculation on:
 Return ONLY valid JSON.`;
 
   try {
-    const result = await getModel().generateContent(prompt);
+    const result = await generateWithFallback(prompt);
     const text   = result.response.text().trim();
     const clean  = text.replace(/^```json?\s*/i, '').replace(/```\s*$/, '').trim();
     return JSON.parse(clean);
