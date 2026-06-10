@@ -13,7 +13,7 @@ let model = null;
 function getModel() {
   if (!model) {
     genAI = new GoogleGenerativeAI(API_KEY);
-    model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+    model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
   }
   return model;
 }

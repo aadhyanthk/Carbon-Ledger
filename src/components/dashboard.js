@@ -36,10 +36,10 @@ export async function render() {
     <div class="dashboard-wrap page-enter">
       <div class="forest-container">
         <canvas id="forest-canvas"></canvas>
-        <div style="position: absolute; top: 20px; left: 20px; z-index: 10;">
+        <div style="position: absolute; top: 20px; left: 20px; z-index: 10; cursor:pointer;" onclick="window.carbonNavigate('/settings')">
           <div style="display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,0.2); backdrop-filter:blur(4px); padding:6px 12px; border-radius:20px; color:white; font-weight:600; text-shadow: 0 1px 2px rgba(0,0,0,0.3);">
             <span>${profile.avatar || '🧑‍🌾'}</span>
-            <span>Hello, ${profile.name || 'Guardian'}</span>
+            <span>${profile.name || 'Set Name'} ›</span>
           </div>
         </div>
       </div>
@@ -106,7 +106,10 @@ export function init() {
     const completedGoals = goals.filter(g => g.completed).length;
     healthScore = Math.min(1, healthScore + (streak.current * 0.05) + (completedGoals * 0.1));
 
-    initForest(canvas, healthScore);
+    // Wait a tick for CSS layout to apply before measuring canvas container
+    requestAnimationFrame(() => {
+      initForest(canvas, healthScore);
+    });
   }
 }
 
