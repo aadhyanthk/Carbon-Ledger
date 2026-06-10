@@ -95,8 +95,7 @@ export function init() {
   // Dark mode toggle
   const themeSwitch = document.getElementById('theme-switch');
   const themeLabel  = document.getElementById('theme-label');
-  const isDark = () => document.documentElement.getAttribute('data-theme') === 'dark' ||
-    (!document.documentElement.hasAttribute('data-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  const isDark = () => document.documentElement.getAttribute('data-theme') === 'dark';
 
   function syncToggleUI() {
     const dark = isDark();

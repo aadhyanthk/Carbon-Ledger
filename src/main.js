@@ -8,25 +8,14 @@ import { showToast } from './utils/toast.js';
 // ── Theme (Dark Mode) ─────────────────────────────────────────────────────────
 
 function applyTheme() {
-  const saved = localStorage.getItem('carbon-theme');
-  if (saved) {
-    document.documentElement.setAttribute('data-theme', saved);
-  }
-  // If no preference stored, system media query handles it via CSS
+  const saved = localStorage.getItem('carbon-theme') || 'light';
+  document.documentElement.setAttribute('data-theme', saved);
 }
 
 window.toggleTheme = function() {
   const html = document.documentElement;
-  const current = html.getAttribute('data-theme');
-  const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-  let next;
-  if (!current) {
-    // No explicit override — flip against system
-    next = systemDark ? 'light' : 'dark';
-  } else {
-    next = current === 'dark' ? 'light' : 'dark';
-  }
+  const current = html.getAttribute('data-theme') || 'light';
+  const next = current === 'dark' ? 'light' : 'dark';
 
   html.setAttribute('data-theme', next);
   localStorage.setItem('carbon-theme', next);
