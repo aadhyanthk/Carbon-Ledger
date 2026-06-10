@@ -155,7 +155,7 @@ export function init() {
     const completedGoals = goals.filter(g => g.completed).length;
     healthScore = Math.min(1, healthScore + (streak.current * 0.05) + (completedGoals * 0.1));
 
-    initForest(canvas, healthScore);
+    initForest(canvas, healthScore, streak.current);
   }
 
   // Simulator Initialization

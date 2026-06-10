@@ -6,6 +6,7 @@
 let canvas, ctx;
 let animationFrameId;
 let healthScore = 1; // 0 to 1, where 1 is perfectly healthy
+let currentStreak = 0;
 let time = 0;
 
 // Elements
@@ -16,7 +17,7 @@ let lastWidth = 0;
 
 let resizeObserver;
 
-export function initForest(canvasElement, initialHealth = 1) {
+export function initForest(canvasElement, initialHealth = 1, streak = 0) {
   // Stop any previous animation loop
   if (animationFrameId) cancelAnimationFrame(animationFrameId);
   animationFrameId = null;
@@ -24,6 +25,7 @@ export function initForest(canvasElement, initialHealth = 1) {
   canvas = canvasElement;
   ctx = canvas.getContext('2d');
   healthScore = initialHealth;
+  currentStreak = streak;
 
   // Reset lastWidth so resize() doesn't skip sizing a brand-new canvas
   lastWidth = 0;
@@ -251,13 +253,73 @@ function animate() {
       particles.splice(i, 1);
       createParticle();
     }
-
-    ctx.save();
-    ctx.translate(p.x, p.y);
-    ctx.rotate(p.rot);
-    ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
-    ctx.restore();
+    
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+    ctx.fill();
   });
+
+  // Animals based on streak milestone
+  if (currentStreak >= 7 && healthScore > 0.3) {
+    // Birds
+    ctx.fillStyle = '#1e293b'; // dark slate
+    for (let i = 0; i < 3; i++) {
+      const bx = (time * 1.5 + i * 40) % (width + 100) - 50;
+      const by = 80 + Math.sin(time * 0.05 + i) * 15;
+      ctx.save();
+      ctx.translate(bx, by);
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.quadraticCurveTo(5, -5, 10, 0);
+      ctx.quadraticCurveTo(15, -5, 20, 0);
+      ctx.quadraticCurveTo(15, -2, 10, 2);
+      ctx.quadraticCurveTo(5, -2, 0, 0);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  if (currentStreak >= 14 && healthScore > 0.4) {
+    // Rabbit
+    const rx = width * 0.3 + Math.sin(time * 0.02) * 40;
+    const ry = height - 40 - Math.abs(Math.sin(time * 0.1)) * 10;
+    ctx.fillStyle = '#f8fafc';
+    ctx.save();
+    ctx.translate(rx, ry);
+    // Body
+    ctx.beginPath(); ctx.arc(0, 0, 8, 0, Math.PI * 2); ctx.fill();
+    // Head
+    ctx.beginPath(); ctx.arc(6, -4, 5, 0, Math.PI * 2); ctx.fill();
+    // Ears
+    ctx.beginPath(); ctx.ellipse(4, -10, 2, 6, 0.3, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(8, -10, 2, 6, -0.1, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+
+  if (currentStreak >= 30 && healthScore > 0.5) {
+    // Deer
+    const dx = width * 0.7;
+    const dy = height - 45;
+    ctx.fillStyle = '#92400e';
+    ctx.save();
+    ctx.translate(dx, dy);
+    // Body
+    ctx.fillRect(-10, -15, 20, 15);
+    // Legs
+    ctx.fillRect(-8, 0, 3, 10);
+    ctx.fillRect(-3, 0, 3, 10);
+    ctx.fillRect(4, 0, 3, 10);
+    ctx.fillRect(8, 0, 3, 10);
+    // Neck/Head
+    ctx.fillRect(-14, -25, 6, 12);
+    ctx.fillRect(-18, -25, 8, 6);
+    // Antlers
+    ctx.strokeStyle = '#451a03';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(-12, -25); ctx.lineTo(-10, -35); ctx.lineTo(-14, -40); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-12, -25); ctx.lineTo(-6, -33); ctx.lineTo(-8, -38); ctx.stroke();
+    ctx.restore();
+  }
 
   animationFrameId = requestAnimationFrame(animate);
 }
