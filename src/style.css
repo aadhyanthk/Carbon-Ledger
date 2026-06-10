@@ -787,7 +787,7 @@ p {
 }
 
 .budget-card {
-  margin: -28px 16px 24px;
+  margin: -28px 16px 8px;
   position: relative;
   z-index: 2;
 }

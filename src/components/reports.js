@@ -50,7 +50,7 @@ export async function render() {
         <!-- Rendered by JS -->
       </div>
       
-      <div class="flex gap-12 mb-24" style="flex-direction: column; margin-top: 56px;">
+      <div class="flex gap-12 mb-24" style="flex-direction: column; margin-top: 48px;">
         <button class="btn btn-primary btn-full" id="btn-share">Share my stats 📸</button>
         <button class="btn btn-secondary btn-full" id="btn-export">Export Data (JSON)</button>
       </div>
