@@ -20,7 +20,7 @@ export async function render() {
         <div style="font-size:3rem; margin-bottom:8px;" id="profile-avatar">${profile.avatar || '🌍'}</div>
         <p class="text-muted" style="font-size:0.875rem;">Member since ${new Date(profile?.createdAt || Date.now()).toLocaleDateString()}</p>
         
-        <div class="mt-16 flex justify-between items-center" style="background:var(--green-50); padding: 12px; border-radius: var(--radius-sm); text-align:left;">
+        <div class="mt-16 flex justify-between items-center" style="background:rgba(34, 197, 94, 0.1); padding: 12px; border-radius: var(--radius-sm); text-align:left;">
           <div>
             <div style="font-size:0.8125rem; color:var(--text-muted);">Daily Baseline</div>
             <div style="font-weight:700; color:var(--text-primary); font-size:1.125rem;">${profile?.baseline?.toFixed(1) || '--'} kg</div>

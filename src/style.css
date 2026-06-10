@@ -73,7 +73,19 @@
 
 /* --- Dark Mode Tokens --- */
 /* Applied via system preference OR manual [data-theme="dark"] on <html> */
-/* OS Dark Mode disabled — default is light mode */
+@media (max-width: 1px) { /* disabled auto dark mode */
+  :root:not([data-theme="light"]) {
+    --text-primary:   #f0fdf4;
+    --text-secondary: #86efac;
+    --text-muted:     #9ca3af;
+    --bg-primary:     #0a1a0f;
+    --bg-card:        rgba(20, 40, 24, 0.90);
+    --bg-card-hover:  rgba(25, 50, 30, 0.96);
+    --shadow-xs:   0 1px 3px rgba(0, 0, 0, 0.3);
+    --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+    --shadow-lg:   0 12px 40px rgba(0, 0, 0, 0.5);
+  }
+}
 
 /* Manual dark mode override */
 [data-theme="dark"] {
@@ -102,7 +114,14 @@
 }
 
 /* Dark background gradient override */
-/* OS Dark Mode disabled */
+@media (max-width: 1px) { /* disabled auto dark mode */
+  :root:not([data-theme="light"]) body::before {
+    background:
+      radial-gradient(ellipse at 20% 0%, rgba(34, 197, 94, 0.07) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 100%, rgba(251, 191, 36, 0.05) 0%, transparent 60%),
+      linear-gradient(180deg, #0a1a0f 0%, #071209 100%);
+  }
+}
 
 [data-theme="dark"] body::before {
   background:
@@ -112,7 +131,12 @@
 }
 
 /* Dark nav override */
-/* OS Dark Mode disabled */
+@media (max-width: 1px) { /* disabled auto dark mode */
+  :root:not([data-theme="light"]) .bottom-nav {
+    background: rgba(10, 26, 15, 0.95);
+    border-top-color: rgba(34, 197, 94, 0.15);
+  }
+}
 
 [data-theme="dark"] .bottom-nav {
   background: rgba(10, 26, 15, 0.95);
@@ -120,7 +144,11 @@
 }
 
 /* Dark statement card */
-/* OS Dark Mode disabled */
+@media (max-width: 1px) { /* disabled auto dark mode */
+  :root:not([data-theme="light"]) .statement-card {
+    background: rgba(20, 40, 24, 0.90);
+  }
+}
 
 [data-theme="dark"] .statement-card {
   background: rgba(20, 40, 24, 0.90);
@@ -849,8 +877,7 @@ p {
   font-weight: 600;
   cursor: pointer;
   background: transparent;
-  color: var(--green-800);
-  opacity: 0.8;
+  color: var(--text-muted);
   transition: all var(--transition-fast);
 }
 .tab-btn.active {
@@ -1018,8 +1045,7 @@ p {
   font-family: 'Outfit', sans-serif;
   cursor: pointer;
   background: transparent;
-  color: var(--green-800);
-  opacity: 0.8;
+  color: var(--text-muted);
   transition: all var(--transition-fast);
 }
 .period-btn.active { background: white; color: var(--green-700); box-shadow: var(--shadow-xs); }
