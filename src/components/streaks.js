@@ -4,6 +4,7 @@
 import { getStreak, getAchievements, getTickets, getActivities } from '../services/storage.js';
 import { fireConfetti } from '../utils/confetti.js';
 import { playSound } from '../utils/audio.js';
+import { escapeHtml } from '../utils/sanitize.js';
 
 // Pre-defined achievements
 const BADGES = [
@@ -74,8 +75,8 @@ export async function render() {
           return `
             <div class="badge-card ${isUnlocked ? '' : 'locked'}">
               <span class="badge-icon">${badge.icon}</span>
-              <div class="badge-name">${badge.name}</div>
-              <div class="badge-desc">${badge.desc}</div>
+              <div class="badge-name">${escapeHtml(badge.name)}</div>
+              <div class="badge-desc">${escapeHtml(badge.desc)}</div>
               ${!isUnlocked ? '<div style="font-size:0.8rem; margin-top:8px;">🔒</div>' : ''}
             </div>
           `;

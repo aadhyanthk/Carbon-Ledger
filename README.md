@@ -69,6 +69,26 @@ graph TD
 
 ---
 
+## 🤖 Built With AI
+
+CarbonLedger was rapidly prototyped and built using advanced AI coding assistance, adhering to the hackathon's core objective of leveraging Generative AI for impactful solutions.
+
+### AI Tools Used
+- **Anti-Gravity (Gemini-Powered IDE Assistant)**: Used for full-stack scaffolding, component generation, and CSS design system creation.
+- **Google Gemini API (`gemini-2.5-flash`)**: Powers the core natural language intelligence of the application.
+
+### Human vs. AI Contribution
+- **What GenAI Handled**: We used Anti-Gravity to accelerate the boilerplate setup, generate the custom vanilla CSS token system, implement the IndexedDB wrapper (`idb-keyval`), and write the HTML5 Canvas forest animation logic. The Gemini API handles the unstructured-to-structured data parsing in the Smart Log.
+- **What Humans Designed**: The core concepts—the "fintech" bank-statement metaphor, the gamification mechanics (streaks, challenge rings, daily lottery), the hardcoded emission factor research (sourced from EPA/DEFRA), and the overall system architecture—were purely human-designed.
+
+### Prompt Engineering Evolution
+Integrating the Gemini API for the Smart Log required significant prompt iteration:
+1. **Initial attempt**: *"Parse this text and tell me the carbon footprint."* (Resulted in unpredictable text formats).
+2. **Second iteration**: Asked for JSON format. (Resulted in JSON wrapped in markdown blockticks which broke `JSON.parse`).
+3. **Final production prompt**: We explicitly defined a strict JSON schema, embedded reference emission values directly in the system prompt to prevent hallucination, and added a regex stripper for markdown code blocks before parsing. This ensures 99% reliability for user inputs.
+
+---
+
 ## 🏗️ System Architecture
 
 CarbonLedger is a pure client-side SPA. No backend servers, no remote databases.

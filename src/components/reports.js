@@ -4,7 +4,9 @@
 import { getActivities, getProfile } from '../services/storage.js';
 import { getDailyBudget, CATEGORY_ICONS } from '../services/carbon-data.js';
 import { getInsight } from '../services/gemini.js';
-import Chart from 'chart.js/auto';
+import { Chart, DoughnutController, ArcElement, LineController, LineElement, PointElement, LinearScale, CategoryScale, Legend, Tooltip, Filler } from 'chart.js';
+
+Chart.register(DoughnutController, ArcElement, LineController, LineElement, PointElement, LinearScale, CategoryScale, Legend, Tooltip, Filler);
 import { escapeHtml } from '../utils/sanitize.js';
 
 let donutChart = null;
@@ -34,14 +36,14 @@ export async function render() {
       <div class="card chart-card mb-24">
         <div class="section-title">Category Breakdown</div>
         <div class="chart-wrap">
-          <canvas id="donut-chart"></canvas>
+          <canvas id="donut-chart" role="img" aria-label="Donut chart showing carbon emissions by category"></canvas>
         </div>
       </div>
 
       <div class="card chart-card mb-24">
         <div class="section-title">Daily Trend</div>
         <div class="chart-wrap">
-          <canvas id="line-chart"></canvas>
+          <canvas id="line-chart" role="img" aria-label="Line chart showing daily carbon emissions trend"></canvas>
         </div>
       </div>
 
@@ -220,7 +222,7 @@ function renderLineChart(dailyTotals, dailyBudget) {
   
   if (lineChart) lineChart.destroy();
   if (!document.getElementById('line-chart')) {
-    wrap.innerHTML = '<canvas id="line-chart"></canvas>';
+    wrap.innerHTML = '<canvas id="line-chart" role="img" aria-label="Line chart showing daily carbon emissions trend"></canvas>';
   }
   const ctx = document.getElementById('line-chart');
 

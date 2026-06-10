@@ -5,6 +5,7 @@ import { CHALLENGE_PACKS } from '../services/carbon-data.js';
 import { playSound } from '../utils/audio.js';
 import { fireConfetti } from '../utils/confetti.js';
 import { getGoals, startChallenge, completeGoalItem, markGoalComplete, deleteGoal, getStreak } from '../services/storage.js';
+import { escapeHtml } from '../utils/sanitize.js';
 
 let goals = [];
 let streak = null;
@@ -44,7 +45,7 @@ export async function render() {
           <div class="challenge-card" style="opacity:0.7">
             <span style="font-size:1.5rem; margin-right:12px;">✅</span>
             <div>
-              <div class="challenge-title">${g.title}</div>
+              <div class="challenge-title">${escapeHtml(g.title)}</div>
               <div class="challenge-meta">Saved ${g.totalSavingKg} kg CO₂</div>
               <button class="btn btn-secondary btn-sm mt-8 btn-retake" data-goal="${g.id}">Retake Challenge</button>
             </div>
@@ -80,7 +81,7 @@ function renderActiveGoal(goal) {
       </div>
       
       <div class="challenge-info">
-        <div class="challenge-title">${goal.title}</div>
+        <div class="challenge-title">${escapeHtml(goal.title)}</div>
         <div class="challenge-meta">${completed} / ${total} days completed</div>
         
         <ul class="checklist mt-12">
@@ -92,7 +93,7 @@ function renderActiveGoal(goal) {
             return `
               <li class="checklist-item ${isDone ? 'done' : ''}">
                 <input type="checkbox" id="${item.id}" data-goal="${goal.id}" ${isDone ? 'checked disabled' : ''}>
-                <label for="${item.id}">${item.label}</label>
+                <label for="${item.id}">${escapeHtml(item.label)}</label>
               </li>
             `;
           }).join('')}
@@ -109,8 +110,8 @@ function renderAvailablePack(pack) {
     <div class="challenge-card" style="cursor:pointer;" onclick="window.startPack('${pack.id}')">
       <div style="font-size:2rem; margin-right:12px;">${pack.emoji}</div>
       <div class="challenge-info">
-        <div class="challenge-title">${pack.title}</div>
-        <div class="challenge-meta">${pack.description}</div>
+        <div class="challenge-title">${escapeHtml(pack.title)}</div>
+        <div class="challenge-meta">${escapeHtml(pack.description)}</div>
         <div class="challenge-savings">Saves ~${pack.totalSavingKg} kg CO₂</div>
       </div>
       <div style="align-self:center; color:var(--green-600);">

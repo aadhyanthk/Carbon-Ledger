@@ -36,7 +36,7 @@ export async function render() {
   return `
     <div class="dashboard-wrap page-enter">
       <div class="forest-container">
-        <canvas id="forest-canvas"></canvas>
+        <canvas id="forest-canvas" role="img" aria-label="Living forest visualization reflecting your carbon health"></canvas>
         <div style="position: absolute; top: 20px; left: 20px; z-index: 10; cursor:pointer;" onclick="window.carbonNavigate('/settings')">
           <div style="display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; background:rgba(255,255,255,0.2); backdrop-filter:blur(4px); border-radius:50%; color:white; font-size:1.5rem; text-shadow: 0 1px 2px rgba(0,0,0,0.3); border:1.5px solid rgba(255,255,255,0.4);">
             ${profile.avatar || '🌍'}

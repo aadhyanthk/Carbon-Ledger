@@ -146,6 +146,12 @@ async function navigate(path) {
     const incoming = viewRoot.firstElementChild;
     if (incoming) {
       incoming.classList.add('page-enter');
+      // Focus management for accessibility
+      const heading = incoming.querySelector('h1, h2');
+      if (heading) {
+        heading.setAttribute('tabindex', '-1');
+        heading.focus();
+      }
     }
 
     if (typeof mod.init === 'function') mod.init();
