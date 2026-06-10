@@ -6,13 +6,27 @@ vi.mock('idb-keyval', () => {
   return {
     createStore: () => ({}),
     get: async (key) => mockStore[key],
-    set: async (key, val) => { mockStore[key] = val; },
-    del: async (key) => { delete mockStore[key]; },
-    _reset: () => { mockStore = {}; } // helper for tests
+    set: async (key, val) => {
+      mockStore[key] = val;
+    },
+    del: async (key) => {
+      delete mockStore[key];
+    },
+    _reset: () => {
+      mockStore = {};
+    }, // helper for tests
   };
 });
 
-import { getProfile, setProfile, addActivity, getActivities, updateStreak, getStreak, setStreak } from '../src/services/storage.js';
+import {
+  getProfile,
+  setProfile,
+  addActivity,
+  getActivities,
+  updateStreak,
+  getStreak,
+  setStreak,
+} from '../src/services/storage.js';
 import * as idb from 'idb-keyval';
 
 describe('Storage Service', () => {
@@ -68,25 +82,35 @@ describe('Storage Service', () => {
 
     it('resets streak if missed a day and no freezes', async () => {
       // Seed a 3 day streak on June 10
-      await setStreak({ current: 3, longest: 3, freezes: 0, lastLogDate: new Date('2026-06-10T10:00:00Z').toDateString() });
-      
+      await setStreak({
+        current: 3,
+        longest: 3,
+        freezes: 0,
+        lastLogDate: new Date('2026-06-10T10:00:00Z').toDateString(),
+      });
+
       // Skip June 11, log on June 12
       const day3 = new Date('2026-06-12T10:00:00Z');
       vi.setSystemTime(day3);
-      await updateStreak(true); 
-      
+      await updateStreak(true);
+
       const s = await getStreak();
       expect(s.current).toBe(1); // Reset back to 1
     });
 
     it('uses freeze to maintain streak if missed a day', async () => {
-      await setStreak({ current: 3, longest: 3, freezes: 1, lastLogDate: new Date('2026-06-10T10:00:00Z').toDateString() });
-      
+      await setStreak({
+        current: 3,
+        longest: 3,
+        freezes: 1,
+        lastLogDate: new Date('2026-06-10T10:00:00Z').toDateString(),
+      });
+
       // Skip June 11, log on June 12
       const day3 = new Date('2026-06-12T10:00:00Z');
       vi.setSystemTime(day3);
-      await updateStreak(true); 
-      
+      await updateStreak(true);
+
       const s = await getStreak();
       expect(s.current).toBe(4); // 3 + missed day (freeze) + 1 = 4? No, the logic says if freeze > 0, current += 1, and today we add another? Wait, actually the logic just adds 1.
       // Let's check storage.js:

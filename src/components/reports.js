@@ -4,9 +4,32 @@
 import { getActivities, getProfile } from '../services/storage.js';
 import { getDailyBudget, CATEGORY_ICONS } from '../services/carbon-data.js';
 import { getInsight } from '../services/gemini.js';
-import { Chart, DoughnutController, ArcElement, LineController, LineElement, PointElement, LinearScale, CategoryScale, Legend, Tooltip, Filler } from 'chart.js';
+import {
+  Chart,
+  DoughnutController,
+  ArcElement,
+  LineController,
+  LineElement,
+  PointElement,
+  LinearScale,
+  CategoryScale,
+  Legend,
+  Tooltip,
+  Filler,
+} from 'chart.js';
 
-Chart.register(DoughnutController, ArcElement, LineController, LineElement, PointElement, LinearScale, CategoryScale, Legend, Tooltip, Filler);
+Chart.register(
+  DoughnutController,
+  ArcElement,
+  LineController,
+  LineElement,
+  PointElement,
+  LinearScale,
+  CategoryScale,
+  Legend,
+  Tooltip,
+  Filler
+);
 import { escapeHtml } from '../utils/sanitize.js';
 
 let donutChart = null;
@@ -79,7 +102,9 @@ export async function init() {
   const selector = document.querySelector('.period-selector');
   selector.addEventListener('click', async (e) => {
     if (e.target.classList.contains('period-btn')) {
-      document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+      document
+        .querySelectorAll('.period-btn')
+        .forEach((b) => b.classList.remove('active'));
       e.target.classList.add('active');
       currentPeriod = e.target.dataset.period;
       await loadDataAndRender();
@@ -90,7 +115,9 @@ export async function init() {
   document.getElementById('btn-export').addEventListener('click', async () => {
     const { getAllData } = await import('../services/storage.js');
     const data = await getAllData();
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify(data, null, 2)], {
+      type: 'application/json',
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -103,22 +130,33 @@ export async function init() {
   // Share
   document.getElementById('btn-share').addEventListener('click', async () => {
     const { shareStatsCard } = await import('../utils/share.js');
-    const { getProfile, getActivities } = await import('../services/storage.js');
+    const { getProfile, getActivities } =
+      await import('../services/storage.js');
     const { getDailyBudget } = await import('../services/carbon-data.js');
-    
+
     const profile = await getProfile();
     const range = getPeriodRange(currentPeriod);
     const activities = await getActivities(range);
-    
+
     let totalKg = 0;
-    activities.forEach(a => totalKg += a.kgCO2);
-    
-    const daysInPeriod = currentPeriod === 'week' ? 7 : currentPeriod === 'month' ? 30 : Math.max(1, activities.length); // simplified
+    activities.forEach((a) => (totalKg += a.kgCO2));
+
+    const daysInPeriod =
+      currentPeriod === 'week'
+        ? 7
+        : currentPeriod === 'month'
+          ? 30
+          : Math.max(1, activities.length); // simplified
     const periodBudget = getDailyBudget(profile) * daysInPeriod;
     const isOver = totalKg > periodBudget;
-    
-    const periodLabel = currentPeriod === 'week' ? 'Past 7 Days' : currentPeriod === 'month' ? 'Past 30 Days' : 'All Time';
-    
+
+    const periodLabel =
+      currentPeriod === 'week'
+        ? 'Past 7 Days'
+        : currentPeriod === 'month'
+          ? 'Past 30 Days'
+          : 'All Time';
+
     const success = await shareStatsCard(profile, totalKg, periodLabel, isOver);
     if (success) {
       window.showToast('Card saved! Share it with friends.', 'success');
@@ -132,22 +170,31 @@ async function loadDataAndRender() {
   const profile = await getProfile();
   const range = getPeriodRange(currentPeriod);
   const activities = await getActivities(range);
-  
+
   // Aggregate data
   let totalKg = 0;
   const catTotals = {};
   const dailyTotals = {};
 
-  activities.forEach(a => {
+  activities.forEach((a) => {
     totalKg += a.kgCO2;
     catTotals[a.category] = (catTotals[a.category] || 0) + a.kgCO2;
-    
-    const dateStr = new Date(a.timestamp).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+
+    const dateStr = new Date(a.timestamp).toLocaleDateString(undefined, {
+      month: 'short',
+      day: 'numeric',
+    });
     dailyTotals[dateStr] = (dailyTotals[dateStr] || 0) + a.kgCO2;
   });
 
-  const topCategory = Object.entries(catTotals).sort((a,b) => b[1] - a[1])[0]?.[0] || 'none';
-  const daysInPeriod = currentPeriod === 'week' ? 7 : currentPeriod === 'month' ? 30 : Math.max(1, Object.keys(dailyTotals).length);
+  const topCategory =
+    Object.entries(catTotals).sort((a, b) => b[1] - a[1])[0]?.[0] || 'none';
+  const daysInPeriod =
+    currentPeriod === 'week'
+      ? 7
+      : currentPeriod === 'month'
+        ? 30
+        : Math.max(1, Object.keys(dailyTotals).length);
   const dailyBudget = getDailyBudget(profile);
   const periodBudget = dailyBudget * daysInPeriod;
 
@@ -159,14 +206,15 @@ async function loadDataAndRender() {
   // Fetch AI Insight
   const insightContainer = document.getElementById('ai-insight-container');
   if (activities.length > 0) {
-    insightContainer.innerHTML = '<div class="text-center text-muted mb-16"><div class="spinner"></div> Generating insight...</div>';
-    
+    insightContainer.innerHTML =
+      '<div class="text-center text-muted mb-16"><div class="spinner"></div> Generating insight...</div>';
+
     const insightText = await getInsight({
       totalKg,
       budget: periodBudget,
       topCategory,
       period: currentPeriod,
-      activities
+      activities,
     });
 
     insightContainer.innerHTML = `
@@ -188,41 +236,52 @@ function renderDonutChart(catTotals) {
   const data = Object.values(catTotals);
 
   if (data.length === 0) {
-    ctx.parentElement.innerHTML = '<div class="empty-state"><p>No data for this period</p></div>';
+    ctx.parentElement.innerHTML =
+      '<div class="empty-state"><p>No data for this period</p></div>';
     return;
   }
 
   // Use design system colors
-  const colors = ['#22c55e', '#fbbf24', '#f87171', '#d97706', '#16a34a', '#86efac'];
+  const colors = [
+    '#22c55e',
+    '#fbbf24',
+    '#f87171',
+    '#d97706',
+    '#16a34a',
+    '#86efac',
+  ];
 
   donutChart = new Chart(ctx, {
     type: 'doughnut',
     data: {
       labels,
-      datasets: [{
-        data,
-        backgroundColor: colors,
-        borderWidth: 0,
-      }]
+      datasets: [
+        {
+          data,
+          backgroundColor: colors,
+          borderWidth: 0,
+        },
+      ],
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        legend: { position: 'right', labels: { font: { family: 'Inter' } } }
+        legend: { position: 'right', labels: { font: { family: 'Inter' } } },
       },
-      cutout: '70%'
-    }
+      cutout: '70%',
+    },
   });
 }
 
 function renderLineChart(dailyTotals, dailyBudget) {
   const wrap = document.getElementById('line-chart')?.parentElement;
   if (!wrap) return;
-  
+
   if (lineChart) lineChart.destroy();
   if (!document.getElementById('line-chart')) {
-    wrap.innerHTML = '<canvas id="line-chart" role="img" aria-label="Line chart showing daily carbon emissions trend"></canvas>';
+    wrap.innerHTML =
+      '<canvas id="line-chart" role="img" aria-label="Line chart showing daily carbon emissions trend"></canvas>';
   }
   const ctx = document.getElementById('line-chart');
 
@@ -244,7 +303,7 @@ function renderLineChart(dailyTotals, dailyBudget) {
           fill: true,
           tension: 0.4,
           borderWidth: 2,
-          pointRadius: 3
+          pointRadius: 3,
         },
         {
           label: 'Budget',
@@ -253,27 +312,28 @@ function renderLineChart(dailyTotals, dailyBudget) {
           borderDash: [5, 5],
           fill: false,
           pointRadius: 0,
-          borderWidth: 1
-        }
-      ]
+          borderWidth: 1,
+        },
+      ],
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
       scales: {
         y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
-        x: { grid: { display: false } }
+        x: { grid: { display: false } },
       },
-      plugins: { legend: { display: false } }
-    }
+      plugins: { legend: { display: false } },
+    },
   });
 }
 
 function renderStatement(activities, totalKg, periodBudget) {
   const container = document.getElementById('carbon-statement');
-  
+
   if (activities.length === 0) {
-    container.innerHTML = '<div class="empty-state"><p>No transactions to show.</p></div>';
+    container.innerHTML =
+      '<div class="empty-state"><p>No transactions to show.</p></div>';
     return;
   }
 
@@ -297,7 +357,9 @@ function renderStatement(activities, totalKg, periodBudget) {
     </div>
     
     <div class="statement-body">
-      ${activities.map(a => `
+      ${activities
+        .map(
+          (a) => `
         <div class="statement-row">
           <div class="stmt-icon">${CATEGORY_ICONS[a.category] || '📊'}</div>
           <div class="stmt-info">
@@ -306,7 +368,9 @@ function renderStatement(activities, totalKg, periodBudget) {
           </div>
           <div class="stmt-co2">${a.kgCO2.toFixed(1)}</div>
         </div>
-      `).join('')}
+      `
+        )
+        .join('')}
     </div>
   `;
 }

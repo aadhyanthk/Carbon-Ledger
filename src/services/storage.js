@@ -7,11 +7,42 @@ import { get, set, del, createStore } from 'idb-keyval';
 // Custom store to namespace our data
 const store = createStore('carbon-ledger-db', 'carbon-ledger-store');
 
+/**
+ * @typedef {Object} UserProfile
+ * @property {number} baseline - The user's baseline kg CO2.
+ * @property {number} goal - The user's goal reduction target.
+ * @property {number} updatedAt - Last updated timestamp.
+ */
+
+/**
+ * @typedef {Object} Activity
+ * @property {string} id
+ * @property {string} category
+ * @property {string} label
+ * @property {number} kgCO2
+ * @property {number} timestamp
+ * @property {'manual'|'ai'} source
+ */
+
+/**
+ * @typedef {Object} Streak
+ * @property {number} current
+ * @property {number} longest
+ * @property {string|null} lastLogDate
+ * @property {number} freezes
+ */
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function idbGet(key)        { return get(key, store); }
-function idbSet(key, value) { return set(key, value, store); }
-function idbDel(key)        { return del(key, store); }
+function idbGet(key) {
+  return get(key, store);
+}
+function idbSet(key, value) {
+  return set(key, value, store);
+}
+function idbDel(key) {
+  return del(key, store);
+}
 
 // ── User Profile ──────────────────────────────────────────────────────────────
 
@@ -45,9 +76,9 @@ export async function addActivity(activity) {
 export async function getActivities(range = {}) {
   const activities = (await idbGet('activities')) || [];
   if (!range.from && !range.to) return activities;
-  return activities.filter(a => {
+  return activities.filter((a) => {
     if (range.from && a.timestamp < range.from) return false;
-    if (range.to   && a.timestamp > range.to)   return false;
+    if (range.to && a.timestamp > range.to) return false;
     return true;
   });
 }
@@ -77,7 +108,10 @@ export async function getTodayTotal() {
  */
 export async function deleteActivity(id) {
   const activities = (await idbGet('activities')) || [];
-  return idbSet('activities', activities.filter(a => a.id !== id));
+  return idbSet(
+    'activities',
+    activities.filter((a) => a.id !== id)
+  );
 }
 
 // ── Streaks ───────────────────────────────────────────────────────────────────
@@ -86,7 +120,14 @@ export async function deleteActivity(id) {
  * @returns {Promise<{ current: number, longest: number, lastLogDate: string, freezes: number }>}
  */
 export async function getStreak() {
-  return (await idbGet('streak')) || { current: 0, longest: 0, lastLogDate: null, freezes: 1 };
+  return (
+    (await idbGet('streak')) || {
+      current: 0,
+      longest: 0,
+      lastLogDate: null,
+      freezes: 1,
+    }
+  );
 }
 
 /** @param {Object} data */
@@ -101,7 +142,7 @@ export async function setStreak(data) {
  */
 export async function updateStreak(underBudget) {
   const streak = await getStreak();
-  const today  = new Date().toDateString();
+  const today = new Date().toDateString();
 
   if (streak.lastLogDate === today) return streak; // already updated today
 
@@ -123,7 +164,7 @@ export async function updateStreak(underBudget) {
     streak.current = Math.max(streak.current + 1, 1);
   }
 
-  streak.longest    = Math.max(streak.longest, streak.current);
+  streak.longest = Math.max(streak.longest, streak.current);
   streak.lastLogDate = today;
 
   await setStreak(streak);
@@ -145,17 +186,17 @@ export async function getGoals() {
  */
 export async function startChallenge(challengePack) {
   const goals = await getGoals();
-  if (goals.find(g => g.id === challengePack.id)) return; // already active
+  if (goals.find((g) => g.id === challengePack.id)) return; // already active
 
   goals.push({
-    id:         challengePack.id,
-    title:      challengePack.title,
-    emoji:      challengePack.emoji,
-    duration:   challengePack.duration,
+    id: challengePack.id,
+    title: challengePack.title,
+    emoji: challengePack.emoji,
+    duration: challengePack.duration,
     totalSavingKg: challengePack.totalSavingKg,
-    startDate:  Date.now(),
+    startDate: Date.now(),
     completedItems: [], // array of item ids completed
-    completed:  false,
+    completed: false,
   });
 
   return idbSet('goals', goals);
@@ -168,7 +209,7 @@ export async function startChallenge(challengePack) {
  */
 export async function completeGoalItem(goalId, itemId) {
   const goals = await getGoals();
-  const goal  = goals.find(g => g.id === goalId);
+  const goal = goals.find((g) => g.id === goalId);
   if (!goal || goal.completedItems.includes(itemId)) return;
 
   goal.completedItems.push(itemId);
@@ -181,7 +222,7 @@ export async function completeGoalItem(goalId, itemId) {
  */
 export async function markGoalComplete(goalId) {
   const goals = await getGoals();
-  const goal  = goals.find(g => g.id === goalId);
+  const goal = goals.find((g) => g.id === goalId);
   if (!goal) return;
   goal.completed = true;
   goal.completedAt = Date.now();
@@ -194,7 +235,10 @@ export async function markGoalComplete(goalId) {
  */
 export async function deleteGoal(goalId) {
   const goals = await getGoals();
-  return idbSet('goals', goals.filter(g => g.id !== goalId));
+  return idbSet(
+    'goals',
+    goals.filter((g) => g.id !== goalId)
+  );
 }
 
 // ── Achievements ──────────────────────────────────────────────────────────────
@@ -224,7 +268,7 @@ export async function getTickets() {
 
 export async function earnTicket() {
   const tickets = await getTickets();
-  const today   = new Date().toDateString();
+  const today = new Date().toDateString();
   if (tickets.lastEarnedDate === today) return tickets; // one per day
 
   tickets.count += 1;
@@ -245,15 +289,24 @@ export async function spendTicket() {
 
 /** Export all data as JSON blob */
 export async function getAllData() {
-  const [profile, activities, streak, goals, achievements, tickets] = await Promise.all([
-    getProfile(),
-    getActivities(),
-    getStreak(),
-    getGoals(),
-    getAchievements(),
-    getTickets(),
-  ]);
-  return { profile, activities, streak, goals, achievements, tickets, exportedAt: Date.now() };
+  const [profile, activities, streak, goals, achievements, tickets] =
+    await Promise.all([
+      getProfile(),
+      getActivities(),
+      getStreak(),
+      getGoals(),
+      getAchievements(),
+      getTickets(),
+    ]);
+  return {
+    profile,
+    activities,
+    streak,
+    goals,
+    achievements,
+    tickets,
+    exportedAt: Date.now(),
+  };
 }
 
 /** Clear all user data (reset app) */

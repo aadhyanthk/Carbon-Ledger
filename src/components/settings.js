@@ -5,7 +5,7 @@ import { clearAllData, getProfile } from '../services/storage.js';
 
 export async function render() {
   const profile = await getProfile();
-  
+
   return `
     <div class="page-header">
       <button class="back-btn" onclick="window.carbonNavigate('/')" aria-label="Go back">
@@ -78,11 +78,15 @@ export async function render() {
       <div class="card" style="width:90%; max-width:320px;">
         <h3>Choose Avatar</h3>
         <div style="margin:16px 0; display:grid; grid-template-columns:repeat(3, 1fr); gap:8px;">
-          ${['🌍', '🍁', '🌲', '🌸', '🍄', '🦊', '🦉', '🐝', '🧑‍🌾'].map(emoji => `
+          ${['🌍', '🍁', '🌲', '🌸', '🍄', '🦊', '🦉', '🐝', '🧑‍🌾']
+            .map(
+              (emoji) => `
             <button class="btn btn-secondary btn-avatar-pick" style="font-size:1.5rem; padding:12px; ${profile.avatar === emoji ? 'border-color:var(--green-600);' : ''}" data-emoji="${emoji}">
               ${emoji}
             </button>
-          `).join('')}
+          `
+            )
+            .join('')}
         </div>
         <div class="flex" style="gap:8px; justify-content:flex-end;">
           <button class="btn btn-ghost btn-sm" id="btn-close-modal">Cancel</button>
@@ -97,13 +101,15 @@ export function init() {
 
   // Dark mode toggle
   const themeSwitch = document.getElementById('theme-switch');
-  const themeLabel  = document.getElementById('theme-label');
-  const isDark = () => document.documentElement.getAttribute('data-theme') === 'dark';
+  const themeLabel = document.getElementById('theme-label');
+  const isDark = () =>
+    document.documentElement.getAttribute('data-theme') === 'dark';
 
   function syncToggleUI() {
     const dark = isDark();
     themeSwitch?.classList.toggle('on', dark);
-    if (themeLabel) themeLabel.textContent = dark ? '☀️ Light Mode' : '🌙 Dark Mode';
+    if (themeLabel)
+      themeLabel.textContent = dark ? '☀️ Light Mode' : '🌙 Dark Mode';
   }
   syncToggleUI();
 
@@ -112,77 +118,98 @@ export function init() {
     syncToggleUI();
   });
 
-
   document.getElementById('btn-edit-profile')?.addEventListener('click', () => {
     modal.classList.remove('hidden');
   });
-  
+
   document.getElementById('btn-close-modal')?.addEventListener('click', () => {
     modal.classList.add('hidden');
   });
-  
-  document.querySelectorAll('.btn-avatar-pick').forEach(btn => {
+
+  document.querySelectorAll('.btn-avatar-pick').forEach((btn) => {
     btn.addEventListener('click', async (e) => {
       const emoji = e.currentTarget.dataset.emoji;
       const { getProfile, setProfile } = await import('../services/storage.js');
       const p = await getProfile();
       p.avatar = emoji;
       await setProfile(p);
-      
+
       document.getElementById('profile-avatar').textContent = emoji;
       modal.classList.add('hidden');
       window.showToast('Avatar updated!', 'success');
-      
+
       // Update styling to reflect active pick
-      document.querySelectorAll('.btn-avatar-pick').forEach(b => b.style.borderColor = '');
+      document
+        .querySelectorAll('.btn-avatar-pick')
+        .forEach((b) => (b.style.borderColor = ''));
       e.currentTarget.style.borderColor = 'var(--green-600)';
     });
   });
   document.getElementById('btn-recalibrate')?.addEventListener('click', () => {
-    if (confirm('This will restart the onboarding quiz to set a new baseline. Your logged activities and streaks will be kept. Continue?')) {
+    if (
+      confirm(
+        'This will restart the onboarding quiz to set a new baseline. Your logged activities and streaks will be kept. Continue?'
+      )
+    ) {
       window.carbonNavigate('/onboarding');
     }
   });
 
-  document.getElementById('btn-invite-friends')?.addEventListener('click', async () => {
-    const SHARE_TEXT = `🌍 I'm tracking my carbon footprint on CarbonLedger to help the planet. Join me and let's grow a forest together! Try it free: https://co-ledger.vercel.app/`;
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: 'CarbonLedger', text: SHARE_TEXT, url: 'https://co-ledger.vercel.app/' });
-      } catch (e) {
-        if (e.name !== 'AbortError') fallback();
+  document
+    .getElementById('btn-invite-friends')
+    ?.addEventListener('click', async () => {
+      const SHARE_TEXT = `🌍 I'm tracking my carbon footprint on CarbonLedger to help the planet. Join me and let's grow a forest together! Try it free: https://co-ledger.vercel.app/`;
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: 'CarbonLedger',
+            text: SHARE_TEXT,
+            url: 'https://co-ledger.vercel.app/',
+          });
+        } catch (e) {
+          if (e.name !== 'AbortError') fallback();
+        }
+      } else {
+        fallback();
       }
-    } else {
-      fallback();
-    }
-    function fallback() {
-      navigator.clipboard.writeText(SHARE_TEXT).then(() => {
-        window.showToast('Link copied to clipboard!', 'success');
+      function fallback() {
+        navigator.clipboard.writeText(SHARE_TEXT).then(() => {
+          window.showToast('Link copied to clipboard!', 'success');
+        });
+      }
+    });
+
+  document
+    .getElementById('btn-export-data')
+    ?.addEventListener('click', async () => {
+      const { getAllData } = await import('../services/storage.js');
+      const data = await getAllData();
+      const blob = new Blob([JSON.stringify(data, null, 2)], {
+        type: 'application/json',
       });
-    }
-  });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `carbon_ledger_backup_${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      window.showToast('Data exported successfully', 'success');
+    });
 
-  document.getElementById('btn-export-data')?.addEventListener('click', async () => {
-    const { getAllData } = await import('../services/storage.js');
-    const data = await getAllData();
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `carbon_ledger_backup_${Date.now()}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-    window.showToast('Data exported successfully', 'success');
-  });
-
-  document.getElementById('btn-clear-data')?.addEventListener('click', async () => {
-    if (confirm('⚠️ WARNING: This will permanently delete all your logged activities, streaks, goals, and profile data from this device. This cannot be undone. Are you absolutely sure?')) {
-      await clearAllData();
-      window.showToast('All data cleared.', 'info');
-      setTimeout(() => {
-        window.location.hash = '/welcome';
-        window.location.reload();
-      }, 1000);
-    }
-  });
+  document
+    .getElementById('btn-clear-data')
+    ?.addEventListener('click', async () => {
+      if (
+        confirm(
+          '⚠️ WARNING: This will permanently delete all your logged activities, streaks, goals, and profile data from this device. This cannot be undone. Are you absolutely sure?'
+        )
+      ) {
+        await clearAllData();
+        window.showToast('All data cleared.', 'info');
+        setTimeout(() => {
+          window.location.hash = '/welcome';
+          window.location.reload();
+        }, 1000);
+      }
+    });
 }

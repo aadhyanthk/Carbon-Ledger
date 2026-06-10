@@ -24,7 +24,8 @@ export function showToast(message, type = 'success', duration = 3000) {
 
   setTimeout(() => {
     toast.classList.add('fade-out');
-    toast.addEventListener('animationend', () => toast.remove(), { once: true });
+    toast.addEventListener('animationend', () => toast.remove(), {
+      once: true,
+    });
   }, duration);
 }
-

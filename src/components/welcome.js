@@ -139,48 +139,59 @@ export function init() {
     window.carbonNavigate('/onboarding');
   });
 
-  document.getElementById('btn-try-demo')?.addEventListener('click', async (e) => {
-    const btn = e.currentTarget;
-    btn.disabled = true;
-    btn.innerHTML = '<div class="spinner" style="width:20px;height:20px;border-width:2px;margin:0 auto;"></div>';
+  document
+    .getElementById('btn-try-demo')
+    ?.addEventListener('click', async (e) => {
+      const btn = e.currentTarget;
+      btn.disabled = true;
+      btn.innerHTML =
+        '<div class="spinner" style="width:20px;height:20px;border-width:2px;margin:0 auto;"></div>';
 
-    try {
-      await seedDemoData();
-      window.showToast('Demo loaded! Explore CarbonLedger 🌿', 'success');
-      setTimeout(() => window.carbonNavigate('/'), 400);
-    } catch (err) {
-      console.error('Demo seed failed:', err);
-      window.showToast('Could not load demo. Try again.', 'error');
-      btn.disabled = false;
-      btn.innerHTML = '<span style="font-size:1.1em;">🎮</span> Try Demo';
-    }
-  });
+      try {
+        await seedDemoData();
+        window.showToast('Demo loaded! Explore CarbonLedger 🌿', 'success');
+        setTimeout(() => window.carbonNavigate('/'), 400);
+      } catch (err) {
+        console.error('Demo seed failed:', err);
+        window.showToast('Could not load demo. Try again.', 'error');
+        btn.disabled = false;
+        btn.innerHTML = '<span style="font-size:1.1em;">🎮</span> Try Demo';
+      }
+    });
 
   // Share button — Web Share API with clipboard fallback
-  document.getElementById('btn-share-app')?.addEventListener('click', async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: 'CarbonLedger — Track Your Carbon Footprint',
-          text: SHARE_TEXT,
-          url: 'https://co-ledger.vercel.app/'
-        });
-        window.showToast('Thanks for sharing! 🌿', 'success');
-      } catch (err) {
-        if (err.name !== 'AbortError') {
-          fallbackCopy();
+  document
+    .getElementById('btn-share-app')
+    ?.addEventListener('click', async () => {
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: 'CarbonLedger — Track Your Carbon Footprint',
+            text: SHARE_TEXT,
+            url: 'https://co-ledger.vercel.app/',
+          });
+          window.showToast('Thanks for sharing! 🌿', 'success');
+        } catch (err) {
+          if (err.name !== 'AbortError') {
+            fallbackCopy();
+          }
         }
+      } else {
+        fallbackCopy();
       }
-    } else {
-      fallbackCopy();
-    }
-  });
+    });
 }
 
 function fallbackCopy() {
-  navigator.clipboard.writeText(SHARE_TEXT).then(() => {
-    window.showToast('Link copied to clipboard! Share it with friends.', 'success');
-  }).catch(() => {
-    window.showToast('Could not copy link. Please share manually.', 'error');
-  });
+  navigator.clipboard
+    .writeText(SHARE_TEXT)
+    .then(() => {
+      window.showToast(
+        'Link copied to clipboard! Share it with friends.',
+        'success'
+      );
+    })
+    .catch(() => {
+      window.showToast('Could not copy link. Please share manually.', 'error');
+    });
 }

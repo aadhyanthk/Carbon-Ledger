@@ -1,8 +1,17 @@
 /**
  * CarbonLedger — Activity Logger
  */
-import { PRESETS, CATEGORY_ICONS, getDailyBudget } from '../services/carbon-data.js';
-import { addActivity, updateStreak, getProfile, getTodayTotal } from '../services/storage.js';
+import {
+  PRESETS,
+  CATEGORY_ICONS,
+  getDailyBudget,
+} from '../services/carbon-data.js';
+import {
+  addActivity,
+  updateStreak,
+  getProfile,
+  getTodayTotal,
+} from '../services/storage.js';
 import { parseActivity } from '../services/gemini.js';
 import { escapeHtml } from '../utils/sanitize.js';
 import { playSound } from '../utils/audio.js';
@@ -35,30 +44,38 @@ export async function render() {
 function renderQuickLog() {
   const cats = [
     { id: 'transport', icon: '🚗', name: 'Transport' },
-    { id: 'food',      icon: '🍔', name: 'Food' },
-    { id: 'energy',    icon: '⚡', name: 'Energy' },
-    { id: 'shopping',  icon: '🛒', name: 'Shopping' },
+    { id: 'food', icon: '🍔', name: 'Food' },
+    { id: 'energy', icon: '⚡', name: 'Energy' },
+    { id: 'shopping', icon: '🛒', name: 'Shopping' },
   ];
 
   return `
     <div class="category-grid">
-      ${cats.map(c => `
+      ${cats
+        .map(
+          (c) => `
         <div class="category-card ${selectedCategory === c.id ? 'active' : ''}" data-cat="${c.id}">
           <span class="cat-icon">${c.icon}</span>
           <span class="cat-name">${c.name}</span>
         </div>
-      `).join('')}
+      `
+        )
+        .join('')}
     </div>
 
     <div class="section-title">Presets</div>
     <div class="preset-list">
-      ${(PRESETS[selectedCategory] || []).map(p => `
+      ${(PRESETS[selectedCategory] || [])
+        .map(
+          (p) => `
         <div class="preset-item" data-id="${p.id}" data-label="${p.label}" data-co2="${p.kgCO2}">
           <span class="preset-icon">${p.icon}</span>
           <span class="preset-label">${p.label}</span>
           <span class="preset-co2">+${p.kgCO2} kg</span>
         </div>
-      `).join('')}
+      `
+        )
+        .join('')}
     </div>
   `;
 }
@@ -88,16 +105,19 @@ async function handleSaveActivity(category, label, kgCO2, source = 'manual') {
     label,
     kgCO2: parseFloat(kgCO2),
     timestamp: Date.now(),
-    source
+    source,
   };
 
   await addActivity(activity);
 
   // Check budget for streak logic
-  const [profile, todayTotal] = await Promise.all([getProfile(), getTodayTotal()]);
+  const [profile, todayTotal] = await Promise.all([
+    getProfile(),
+    getTodayTotal(),
+  ]);
   const budget = getDailyBudget(profile);
   const underBudget = todayTotal <= budget;
-  
+
   await updateStreak(underBudget);
 
   playSound('ching');
@@ -112,11 +132,12 @@ export function init() {
   wrap.addEventListener('click', async (e) => {
     if (e.target.classList.contains('tab-btn')) {
       const tabBtns = wrap.querySelectorAll('.tab-btn');
-      tabBtns.forEach(b => b.classList.remove('active'));
+      tabBtns.forEach((b) => b.classList.remove('active'));
       e.target.classList.add('active');
-      
+
       currentTab = e.target.dataset.tab;
-      content.innerHTML = currentTab === 'quick' ? renderQuickLog() : renderSmartLog();
+      content.innerHTML =
+        currentTab === 'quick' ? renderQuickLog() : renderSmartLog();
     }
   });
 
@@ -147,14 +168,14 @@ export function init() {
 
       const loader = document.getElementById('ai-loading');
       const resultsDiv = document.getElementById('ai-results-container');
-      
+
       loader.classList.remove('hidden');
       resultsDiv.innerHTML = '';
       document.getElementById('ai-text').disabled = true;
       submitBtn.disabled = true;
 
       const results = await parseActivity(text);
-      
+
       loader.classList.add('hidden');
       document.getElementById('ai-text').disabled = false;
       submitBtn.disabled = false;
@@ -165,12 +186,15 @@ export function init() {
       }
 
       if (results.length === 0) {
-        resultsDiv.innerHTML = '<div class="text-center text-muted">No carbon-emitting activities found in that text.</div>';
+        resultsDiv.innerHTML =
+          '<div class="text-center text-muted">No carbon-emitting activities found in that text.</div>';
         return;
       }
 
       // Render confirmation cards
-      resultsDiv.innerHTML = results.map((res, i) => `
+      resultsDiv.innerHTML = results
+        .map(
+          (res, i) => `
         <div class="ai-result-card" id="ai-res-${i}">
           <div class="activity-icon">${escapeHtml(CATEGORY_ICONS[res.category] || '🌱')}</div>
           <div class="ai-res-info">
@@ -182,7 +206,9 @@ export function init() {
             <button class="ai-result-btn reject" data-idx="${i}">✗</button>
           </div>
         </div>
-      `).join('');
+      `
+        )
+        .join('');
     }
 
     // Handle confirm/reject on AI results

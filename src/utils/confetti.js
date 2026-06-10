@@ -16,8 +16,8 @@ export function fireConfetti() {
   document.body.appendChild(canvas);
 
   const ctx = canvas.getContext('2d');
-  const width = canvas.width = window.innerWidth;
-  const height = canvas.height = window.innerHeight;
+  const width = (canvas.width = window.innerWidth);
+  const height = (canvas.height = window.innerHeight);
 
   const colors = ['#22c55e', '#fbbf24', '#f87171', '#3b82f6', '#a855f7'];
   const particles = [];
@@ -33,7 +33,7 @@ export function fireConfetti() {
       color: colors[Math.floor(Math.random() * colors.length)],
       tilt: Math.floor(Math.random() * 10) - 10,
       tiltAngle: 0,
-      tiltAngleInc: (Math.random() * 0.07) + 0.05
+      tiltAngleInc: Math.random() * 0.07 + 0.05,
     });
   }
 
@@ -44,7 +44,7 @@ export function fireConfetti() {
     ctx.clearRect(0, 0, width, height);
     let active = false;
 
-    particles.forEach(p => {
+    particles.forEach((p) => {
       p.tiltAngle += p.tiltAngleInc;
       p.y += (Math.cos(p.tiltAngle) + 1 + p.r / 2) / 2;
       p.x += Math.sin(p.tiltAngle) * 2 + p.dx;

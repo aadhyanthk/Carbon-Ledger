@@ -15,14 +15,14 @@ async function generateWithFallback(prompt) {
     const response = await fetch('/api/gemini', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt })
+      body: JSON.stringify({ prompt }),
     });
-    
+
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       throw new Error(errorData.error || 'Failed to fetch from Gemini proxy');
     }
-    
+
     const data = await response.json();
     // Return an object that matches the SDK's expected structure so the rest of the code works
     return { response: { text: () => data.text } };
@@ -30,13 +30,13 @@ async function generateWithFallback(prompt) {
 
   // Local development: use the embedded key directly
   if (!genAI) genAI = new GoogleGenerativeAI(API_KEY);
-  
+
   const modelsToTry = [
     'gemini-2.5-flash',
     'gemini-2.5-flash-lite',
-    'gemini-flash-latest'
+    'gemini-flash-latest',
   ];
-  
+
   let lastError;
   for (const modelName of modelsToTry) {
     try {
@@ -90,16 +90,23 @@ Rules:
 
   try {
     const result = await generateWithFallback(prompt);
-    const text   = result.response.text().trim();
+    const text = result.response.text().trim();
 
     // Strip markdown code fences if present
-    const clean = text.replace(/^```json?\s*/i, '').replace(/```\s*$/, '').trim();
+    const clean = text
+      .replace(/^```json?\s*/i, '')
+      .replace(/```\s*$/, '')
+      .trim();
     const parsed = JSON.parse(clean);
 
     if (!Array.isArray(parsed)) return [];
 
-    return parsed.filter(item =>
-      item.category && item.label && typeof item.kgCO2 === 'number' && item.kgCO2 >= 0
+    return parsed.filter(
+      (item) =>
+        item.category &&
+        item.label &&
+        typeof item.kgCO2 === 'number' &&
+        item.kgCO2 >= 0
     );
   } catch (err) {
     console.error('Gemini parseActivity error:', err);
@@ -117,7 +124,10 @@ Rules:
  */
 export async function getInsight(periodData) {
   const { totalKg, budget, topCategory, period, activities } = periodData;
-  const budgetStatus = totalKg <= budget ? 'under budget' : `${((totalKg - budget) / budget * 100).toFixed(0)}% over budget`;
+  const budgetStatus =
+    totalKg <= budget
+      ? 'under budget'
+      : `${(((totalKg - budget) / budget) * 100).toFixed(0)}% over budget`;
 
   const prompt = `You are an encouraging eco-coach. Write exactly 2 sentences of personalized insight.
 
@@ -175,14 +185,18 @@ Return ONLY valid JSON.`;
 
   try {
     const result = await generateWithFallback(prompt);
-    const text   = result.response.text().trim();
-    const clean  = text.replace(/^```json?\s*/i, '').replace(/```\s*$/, '').trim();
+    const text = result.response.text().trim();
+    const clean = text
+      .replace(/^```json?\s*/i, '')
+      .replace(/```\s*$/, '')
+      .trim();
     return JSON.parse(clean);
   } catch (err) {
     console.error('Gemini whatIf error:', err);
     window.showToast('AI Error: ' + err.message, 'error');
     return {
-      summary: 'Unable to calculate this scenario right now. Try rephrasing your question.',
+      summary:
+        'Unable to calculate this scenario right now. Try rephrasing your question.',
       annualSavingKg: 0,
       equivalent: '',
     };

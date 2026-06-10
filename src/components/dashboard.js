@@ -2,7 +2,13 @@
  * CarbonLedger — Dashboard Component
  */
 import { initForest, updateForestHealth, cleanupForest } from './forest.js';
-import { getProfile, getTodayTotal, getTodayActivities, getStreak, getGoals } from '../services/storage.js';
+import {
+  getProfile,
+  getTodayTotal,
+  getTodayActivities,
+  getStreak,
+  getGoals,
+} from '../services/storage.js';
 import { getDailyBudget, CATEGORY_ICONS } from '../services/carbon-data.js';
 import { escapeHtml } from '../utils/sanitize.js';
 
@@ -13,23 +19,26 @@ export async function render() {
   todayTotal = await getTodayTotal();
   streak = await getStreak();
   goals = await getGoals();
-  
+
   if (!profile) return '<div>Error loading profile</div>';
 
   budget = getDailyBudget(profile);
   const remaining = budget - todayTotal;
   const pctUsed = Math.min((todayTotal / budget) * 100, 100);
-  
+
   let barClass = 'budget-bar-fill';
   if (pctUsed > 100) barClass += ' danger';
   else if (pctUsed > 80) barClass += ' warn';
 
   // Calculate health score (0-1) for forest
-  let healthScore = 1 - (pctUsed / 100);
+  let healthScore = 1 - pctUsed / 100;
   if (healthScore < 0) healthScore = 0;
   // Boost health if streak is high or goals are completed
-  const completedGoals = goals.filter(g => g.completed).length;
-  healthScore = Math.min(1, healthScore + (streak.current * 0.05) + (completedGoals * 0.1));
+  const completedGoals = goals.filter((g) => g.completed).length;
+  healthScore = Math.min(
+    1,
+    healthScore + streak.current * 0.05 + completedGoals * 0.1
+  );
 
   const activities = await getTodayActivities();
 
@@ -77,20 +86,25 @@ export async function render() {
             <a href="#/history" class="text-green font-outfit fw-semibold" style="text-decoration:none;font-size:0.875rem;">See all</a>
           </div>
           
-          ${activities.length === 0 ? 
-            `<div class="empty-state" style="padding: 20px 0;">
+          ${
+            activities.length === 0
+              ? `<div class="empty-state" style="padding: 20px 0;">
               <span class="empty-icon" style="font-size:2rem;">🍃</span>
               <p>No activity logged yet today.</p>
-            </div>` 
-            : 
-            `<ul class="activity-list">
-              ${activities.slice(0, 5).map(a => `
+            </div>`
+              : `<ul class="activity-list">
+              ${activities
+                .slice(0, 5)
+                .map(
+                  (a) => `
                 <li class="activity-item">
                   <div class="activity-icon">${escapeHtml(CATEGORY_ICONS[a.category] || '🌱')}</div>
                   <div class="activity-label">${escapeHtml(a.label)}</div>
                   <div class="activity-co2">${a.kgCO2.toFixed(1)} kg</div>
                 </li>
-              `).join('')}
+              `
+                )
+                .join('')}
             </ul>`
           }
         </div>
@@ -156,12 +170,15 @@ export function init() {
   const canvas = document.getElementById('forest-canvas');
   if (canvas) {
     const pctUsed = Math.min((todayTotal / budget) * 100, 100);
-    let healthScore = 1 - (pctUsed / 100);
+    let healthScore = 1 - pctUsed / 100;
     if (healthScore < 0) healthScore = 0;
-    
+
     // Boost based on streaks & goals
-    const completedGoals = goals.filter(g => g.completed).length;
-    healthScore = Math.min(1, healthScore + (streak.current * 0.05) + (completedGoals * 0.1));
+    const completedGoals = goals.filter((g) => g.completed).length;
+    healthScore = Math.min(
+      1,
+      healthScore + streak.current * 0.05 + completedGoals * 0.1
+    );
 
     initForest(canvas, healthScore, streak.current);
   }
@@ -169,36 +186,54 @@ export function init() {
   // Simulator Initialization
   initSimulator();
 
-  document.getElementById('btn-share-impact')?.addEventListener('click', async () => {
-    const SHARE_TEXT = `🔥 I'm on a ${streak.current}-day streak on CarbonLedger, tracking my carbon footprint daily! Join me: https://co-ledger.vercel.app/`;
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: 'My CarbonLedger Streak', text: SHARE_TEXT, url: 'https://co-ledger.vercel.app/' });
-      } catch (e) {
-        if (e.name !== 'AbortError') fallback();
+  document
+    .getElementById('btn-share-impact')
+    ?.addEventListener('click', async () => {
+      const SHARE_TEXT = `🔥 I'm on a ${streak.current}-day streak on CarbonLedger, tracking my carbon footprint daily! Join me: https://co-ledger.vercel.app/`;
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: 'My CarbonLedger Streak',
+            text: SHARE_TEXT,
+            url: 'https://co-ledger.vercel.app/',
+          });
+        } catch (e) {
+          if (e.name !== 'AbortError') fallback();
+        }
+      } else {
+        fallback();
       }
-    } else {
-      fallback();
-    }
-    function fallback() {
-      navigator.clipboard.writeText(SHARE_TEXT).then(() => {
-        window.showToast('Copied to clipboard!', 'success');
-      });
-    }
-  });
+      function fallback() {
+        navigator.clipboard.writeText(SHARE_TEXT).then(() => {
+          window.showToast('Copied to clipboard!', 'success');
+        });
+      }
+    });
 }
 
 function initSimulator() {
   const currentAnnual = budget * 365;
   const sliders = [
-    { el: document.getElementById('sim-transit'), val: document.getElementById('val-transit'), suffix: ' days/wk' },
-    { el: document.getElementById('sim-meat'), val: document.getElementById('val-meat'), suffix: ' days/wk' },
-    { el: document.getElementById('sim-thermo'), val: document.getElementById('val-thermo'), suffix: '°C' }
+    {
+      el: document.getElementById('sim-transit'),
+      val: document.getElementById('val-transit'),
+      suffix: ' days/wk',
+    },
+    {
+      el: document.getElementById('sim-meat'),
+      val: document.getElementById('val-meat'),
+      suffix: ' days/wk',
+    },
+    {
+      el: document.getElementById('sim-thermo'),
+      val: document.getElementById('val-thermo'),
+      suffix: '°C',
+    },
   ];
 
   function updateSimulation() {
     let dailySavings = 0;
-    sliders.forEach(s => {
+    sliders.forEach((s) => {
       if (!s.el) return;
       const v = parseInt(s.el.value, 10);
       s.val.textContent = v + s.suffix;
@@ -213,14 +248,16 @@ function initSimulator() {
     import('../services/carbon-data.js').then(({ calcSavings }) => {
       const savings = calcSavings(dailySavings);
       const newAnnual = Math.max(0, currentAnnual - savings.annual);
-      document.getElementById('sim-total-val').textContent = Math.round(newAnnual) + ' kg';
-      document.getElementById('sim-bar').style.width = Math.max(10, (newAnnual / currentAnnual) * 100) + '%';
+      document.getElementById('sim-total-val').textContent =
+        Math.round(newAnnual) + ' kg';
+      document.getElementById('sim-bar').style.width =
+        Math.max(10, (newAnnual / currentAnnual) * 100) + '%';
       document.getElementById('eq-trees').textContent = savings.trees;
       document.getElementById('eq-flights').textContent = savings.flights;
     });
   }
 
-  sliders.forEach(s => {
+  sliders.forEach((s) => {
     if (s.el) s.el.addEventListener('input', updateSimulation);
   });
 
@@ -232,7 +269,7 @@ function initSimulator() {
 
       const loader = document.getElementById('whatif-loading');
       const resultDiv = document.getElementById('whatif-result');
-      
+
       loader.classList.remove('hidden');
       resultDiv.innerHTML = '';
       submitBtn.disabled = true;
@@ -249,7 +286,7 @@ function initSimulator() {
       }
 
       const isPositive = res.annualSavingKg > 0;
-      
+
       resultDiv.innerHTML = `
         <div class="ai-result-card" style="align-items:flex-start;">
           <div class="activity-icon" style="background: ${isPositive ? 'var(--green-100)' : '#fee2e2'}">${isPositive ? '🌿' : '⚠️'}</div>
@@ -270,7 +307,10 @@ function initSimulator() {
 
 // Ensure forest loop is killed if we navigate away
 window.addEventListener('hashchange', () => {
-  if (window.location.hash.slice(1) !== '/' && window.location.hash.slice(1) !== '/dashboard') {
+  if (
+    window.location.hash.slice(1) !== '/' &&
+    window.location.hash.slice(1) !== '/dashboard'
+  ) {
     cleanupForest();
   }
 });

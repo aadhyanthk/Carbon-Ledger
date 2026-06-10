@@ -90,7 +90,7 @@ export function playSound(type) {
     // Slot machine spinning (bloop bloop bloop)
     osc.type = 'triangle';
     gain.gain.setValueAtTime(0.2, t);
-    
+
     for (let i = 0; i < 15; i++) {
       osc.frequency.setValueAtTime(300 + Math.random() * 200, t + i * 0.1);
       gain.gain.setValueAtTime(0.2, t + i * 0.1);

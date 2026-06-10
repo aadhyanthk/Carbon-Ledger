@@ -33,13 +33,15 @@ self.addEventListener('install', (event) => {
 // ── Activate: clean old caches ────────────────────────────────────────────────
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(
-        keys
-          .filter((key) => key !== CACHE_NAME)
-          .map((key) => caches.delete(key))
+    caches
+      .keys()
+      .then((keys) =>
+        Promise.all(
+          keys
+            .filter((key) => key !== CACHE_NAME)
+            .map((key) => caches.delete(key))
+        )
       )
-    )
   );
   self.clients.claim();
 });
@@ -57,19 +59,27 @@ self.addEventListener('fetch', (event) => {
     caches.match(request).then((cached) => {
       if (cached) return cached;
 
-      return fetch(request).then((response) => {
-        // Cache valid responses for future offline use
-        if (response && response.status === 200 && response.type === 'basic') {
-          const toCache = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, toCache));
-        }
-        return response;
-      }).catch(() => {
-        // Offline fallback: return cached index.html for navigation requests
-        if (request.mode === 'navigate') {
-          return caches.match('/index.html');
-        }
-      });
+      return fetch(request)
+        .then((response) => {
+          // Cache valid responses for future offline use
+          if (
+            response &&
+            response.status === 200 &&
+            response.type === 'basic'
+          ) {
+            const toCache = response.clone();
+            caches
+              .open(CACHE_NAME)
+              .then((cache) => cache.put(request, toCache));
+          }
+          return response;
+        })
+        .catch(() => {
+          // Offline fallback: return cached index.html for navigation requests
+          if (request.mode === 'navigate') {
+            return caches.match('/index.html');
+          }
+        });
     })
   );
 });

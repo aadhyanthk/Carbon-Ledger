@@ -1,4 +1,9 @@
-export async function shareStatsCard(profile, totalKg, periodLabel, isOverBudget) {
+export async function shareStatsCard(
+  profile,
+  totalKg,
+  periodLabel,
+  isOverBudget
+) {
   const canvas = document.createElement('canvas');
   canvas.width = 600;
   canvas.height = 400;
@@ -16,7 +21,7 @@ export async function shareStatsCard(profile, totalKg, periodLabel, isOverBudget
   ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
   ctx.shadowBlur = 20;
   ctx.shadowOffsetY = 10;
-  
+
   ctx.beginPath();
   ctx.roundRect(40, 40, 520, 320, 24);
   ctx.fill();
@@ -37,7 +42,7 @@ export async function shareStatsCard(profile, totalKg, periodLabel, isOverBudget
   ctx.fillStyle = '#1a2e05';
   ctx.font = 'bold 72px "Outfit", sans-serif';
   ctx.fillText(totalKg.toFixed(1) + ' kg', 300, 230);
-  
+
   ctx.fillStyle = '#6b7280';
   ctx.font = '18px "Inter", sans-serif';
   ctx.fillText('Total Emissions', 300, 260);

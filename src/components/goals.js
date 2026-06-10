@@ -4,7 +4,14 @@
 import { CHALLENGE_PACKS } from '../services/carbon-data.js';
 import { playSound } from '../utils/audio.js';
 import { fireConfetti } from '../utils/confetti.js';
-import { getGoals, startChallenge, completeGoalItem, markGoalComplete, deleteGoal, getStreak } from '../services/storage.js';
+import {
+  getGoals,
+  startChallenge,
+  completeGoalItem,
+  markGoalComplete,
+  deleteGoal,
+  getStreak,
+} from '../services/storage.js';
 import { escapeHtml } from '../utils/sanitize.js';
 
 let goals = [];
@@ -13,12 +20,14 @@ let streak = null;
 export async function render() {
   goals = await getGoals();
   streak = await getStreak();
-  
-  const activeGoals = goals.filter(g => !g.completed);
-  const completedGoals = goals.filter(g => g.completed);
-  
-  const activeIds = goals.map(g => g.id);
-  const availablePacks = CHALLENGE_PACKS.filter(p => !activeIds.includes(p.id));
+
+  const activeGoals = goals.filter((g) => !g.completed);
+  const completedGoals = goals.filter((g) => g.completed);
+
+  const activeIds = goals.map((g) => g.id);
+  const availablePacks = CHALLENGE_PACKS.filter(
+    (p) => !activeIds.includes(p.id)
+  );
 
   return `
     <div class="page-header">
@@ -29,19 +38,31 @@ export async function render() {
     </div>
 
     <div class="goals-wrap fade-in">
-      ${activeGoals.length > 0 ? `
+      ${
+        activeGoals.length > 0
+          ? `
         <div class="section-title">Active Challenges</div>
         ${activeGoals.map(renderActiveGoal).join('')}
-      ` : ''}
+      `
+          : ''
+      }
 
-      ${availablePacks.length > 0 ? `
+      ${
+        availablePacks.length > 0
+          ? `
         <div class="section-title mt-24">Available Challenges</div>
         ${availablePacks.map(renderAvailablePack).join('')}
-      ` : ''}
+      `
+          : ''
+      }
 
-      ${completedGoals.length > 0 ? `
+      ${
+        completedGoals.length > 0
+          ? `
         <div class="section-title mt-24">Completed</div>
-        ${completedGoals.map(g => `
+        ${completedGoals
+          .map(
+            (g) => `
           <div class="challenge-card" style="opacity:0.7">
             <span style="font-size:1.5rem; margin-right:12px;">✅</span>
             <div>
@@ -50,20 +71,24 @@ export async function render() {
               <button class="btn btn-secondary btn-sm mt-8 btn-retake" data-goal="${g.id}">Retake Challenge</button>
             </div>
           </div>
-        `).join('')}
-      ` : ''}
+        `
+          )
+          .join('')}
+      `
+          : ''
+      }
     </div>
   `;
 }
 
 function renderActiveGoal(goal) {
-  const pack = CHALLENGE_PACKS.find(p => p.id === goal.id);
+  const pack = CHALLENGE_PACKS.find((p) => p.id === goal.id);
   if (!pack) return '';
 
   const total = pack.items.length;
   const completed = goal.completedItems.length;
   const pct = Math.round((completed / total) * 100);
-  
+
   // SVG Ring calculation
   const radius = 22;
   const circ = 2 * Math.PI * radius;
@@ -85,18 +110,20 @@ function renderActiveGoal(goal) {
         <div class="challenge-meta">${completed} / ${total} days completed</div>
         
         <ul class="checklist mt-12">
-          ${pack.items.map((item, i) => {
-            const isDone = goal.completedItems.includes(item.id);
-            // Show up to the first uncompleted item
-            if (!isDone && i > completed) return ''; 
-            
-            return `
+          ${pack.items
+            .map((item, i) => {
+              const isDone = goal.completedItems.includes(item.id);
+              // Show up to the first uncompleted item
+              if (!isDone && i > completed) return '';
+
+              return `
               <li class="checklist-item ${isDone ? 'done' : ''}">
                 <input type="checkbox" id="${item.id}" data-goal="${goal.id}" ${isDone ? 'checked disabled' : ''}>
                 <label for="${item.id}">${escapeHtml(item.label)}</label>
               </li>
             `;
-          }).join('')}
+            })
+            .join('')}
         </ul>
         
         ${pct === 100 ? `<button class="btn btn-primary btn-sm mt-12 btn-claim" data-goal="${goal.id}">Claim Reward</button>` : ''}
@@ -123,7 +150,7 @@ function renderAvailablePack(pack) {
 
 // Attach to window so onclick works in string template
 window.startPack = async (packId) => {
-  const pack = CHALLENGE_PACKS.find(p => p.id === packId);
+  const pack = CHALLENGE_PACKS.find((p) => p.id === packId);
   if (pack) {
     await startChallenge(pack);
     window.showToast(`Started challenge: ${pack.title}`, 'success');
@@ -141,12 +168,12 @@ export function init() {
     if (e.target.type === 'checkbox' && e.target.checked) {
       const goalId = e.target.dataset.goal;
       const itemId = e.target.id;
-      
+
       e.target.disabled = true; // disable immediately
       await completeGoalItem(goalId, itemId);
-      
+
       playSound('pop');
-      
+
       // Re-render to update rings
       const mod = await import('./goals.js');
       document.getElementById('view-root').innerHTML = await mod.render();
@@ -159,16 +186,16 @@ export function init() {
     if (e.target.classList.contains('btn-claim')) {
       const goalId = e.target.dataset.goal;
       await markGoalComplete(goalId);
-      
+
       // Earn a freeze reward for completing a pack
       const { setStreak } = await import('../services/storage.js');
       streak.freezes += 1;
       await setStreak(streak);
-      
+
       window.showToast('Pack completed! +1 Streak Freeze earned.', 'success');
       playSound('fanfare');
       fireConfetti();
-      
+
       // Re-render
       const mod = await import('./goals.js');
       document.getElementById('view-root').innerHTML = await mod.render();
@@ -177,7 +204,7 @@ export function init() {
       const goalId = e.target.dataset.goal;
       await deleteGoal(goalId);
       window.showToast('Challenge available to retake!', 'info');
-      
+
       const mod = await import('./goals.js');
       document.getElementById('view-root').innerHTML = await mod.render();
       mod.init();

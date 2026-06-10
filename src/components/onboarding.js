@@ -1,7 +1,11 @@
 /**
  * CarbonLedger — Onboarding Component
  */
-import { ONBOARDING_QUESTIONS, calculateBaseline, COUNTRY_BASELINES } from '../services/carbon-data.js';
+import {
+  ONBOARDING_QUESTIONS,
+  calculateBaseline,
+  COUNTRY_BASELINES,
+} from '../services/carbon-data.js';
 import { setProfile } from '../services/storage.js';
 
 let currentStep = 0;
@@ -34,13 +38,17 @@ function renderStep(index) {
     <h2>${q.title}</h2>
     <p>${q.subtitle}</p>
     <div class="option-grid">
-      ${q.options.map(opt => `
+      ${q.options
+        .map(
+          (opt) => `
         <div class="option-card" data-id="${opt.id}" data-step="${index}">
           <span class="option-icon">${opt.icon}</span>
           <span class="option-label">${opt.label}</span>
           <span class="option-value">${opt.description}</span>
         </div>
-      `).join('')}
+      `
+        )
+        .join('')}
     </div>
   `;
 }
@@ -61,19 +69,19 @@ function renderResults() {
         
         <div class="comparison-row">
           <div class="cmp-label">You</div>
-          <div class="comparison-bar"><div class="comparison-bar-fill" style="width: ${Math.min((baseline/50)*100, 100)}%; background: var(--green-600)"></div></div>
+          <div class="comparison-bar"><div class="comparison-bar-fill" style="width: ${Math.min((baseline / 50) * 100, 100)}%; background: var(--green-600)"></div></div>
           <div class="cmp-val">${baseline.toFixed(1)}</div>
         </div>
         
         <div class="comparison-row">
           <div class="cmp-label">Global Avg</div>
-          <div class="comparison-bar"><div class="comparison-bar-fill" style="width: ${Math.min((COUNTRY_BASELINES.global/50)*100, 100)}%; background: var(--text-muted)"></div></div>
+          <div class="comparison-bar"><div class="comparison-bar-fill" style="width: ${Math.min((COUNTRY_BASELINES.global / 50) * 100, 100)}%; background: var(--text-muted)"></div></div>
           <div class="cmp-val">${COUNTRY_BASELINES.global.toFixed(1)}</div>
         </div>
         
         <div class="comparison-row">
           <div class="cmp-label">US Avg</div>
-          <div class="comparison-bar"><div class="comparison-bar-fill" style="width: ${Math.min((COUNTRY_BASELINES.us/50)*100, 100)}%; background: var(--text-muted)"></div></div>
+          <div class="comparison-bar"><div class="comparison-bar-fill" style="width: ${Math.min((COUNTRY_BASELINES.us / 50) * 100, 100)}%; background: var(--text-muted)"></div></div>
           <div class="cmp-val">${COUNTRY_BASELINES.us.toFixed(1)}</div>
         </div>
       </div>
@@ -144,10 +152,10 @@ export function init() {
     if (card) {
       const stepIdx = parseInt(card.dataset.step, 10);
       const q = ONBOARDING_QUESTIONS[stepIdx];
-      
+
       // Highlight selected
       const cards = content.querySelectorAll('.option-card');
-      cards.forEach(c => c.classList.remove('selected'));
+      cards.forEach((c) => c.classList.remove('selected'));
       card.classList.add('selected');
 
       // Save answer
@@ -164,16 +172,16 @@ export function init() {
           baseline = calculateBaseline(answers);
           progress.style.display = 'none'; // hide progress
           content.innerHTML = renderResults();
-          
+
           // Trigger animations
           setTimeout(() => {
-             const fills = content.querySelectorAll('.comparison-bar-fill');
-             // Hack to trigger reflow and css transition if they don't play automatically
-             fills.forEach(f => {
-               const w = f.style.width;
-               f.style.width = '0%';
-               setTimeout(()=> f.style.width = w, 50);
-             });
+            const fills = content.querySelectorAll('.comparison-bar-fill');
+            // Hack to trigger reflow and css transition if they don't play automatically
+            fills.forEach((f) => {
+              const w = f.style.width;
+              f.style.width = '0%';
+              setTimeout(() => (f.style.width = w), 50);
+            });
           }, 10);
         }
       }, 400);
@@ -188,9 +196,9 @@ export function init() {
     const goalCard = e.target.closest('.goal-card');
     if (goalCard) {
       const cards = content.querySelectorAll('.goal-card');
-      cards.forEach(c => c.classList.remove('selected'));
+      cards.forEach((c) => c.classList.remove('selected'));
       goalCard.classList.add('selected');
-      
+
       selectedGoalPct = parseInt(goalCard.dataset.pct, 10);
       document.getElementById('ob-finish').disabled = false;
     }
@@ -202,7 +210,7 @@ export function init() {
         goalPercent: selectedGoalPct,
         answers,
         createdAt: Date.now(),
-        onboardingComplete: true
+        onboardingComplete: true,
       });
       window.carbonNavigate('/');
     }

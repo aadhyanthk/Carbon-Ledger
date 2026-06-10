@@ -1,16 +1,19 @@
 import { describe, it, expect } from 'vitest';
-import { calculateBaseline, calcSavings, getDailyBudget } from '../src/services/carbon-data.js';
+import {
+  calculateBaseline,
+  calcSavings,
+  getDailyBudget,
+} from '../src/services/carbon-data.js';
 
 describe('Carbon Data Logic', () => {
-  
   it('calculates a baseline correctly from answers', () => {
     // A mid-range persona
     const answers = {
       transport: 'car_small', // 2.84
-      home: 'apartment_lg',   // 2.10
-      diet: 'vegetarian',     // 3.81
+      home: 'apartment_lg', // 2.10
+      diet: 'vegetarian', // 3.81
       shopping: 'occasional', // 1.50
-      lifestyle: 'dog'        // 2.47
+      lifestyle: 'dog', // 2.47
     };
     // Expected total = 2.84 + 2.10 + 3.81 + 1.50 + 2.47 = 12.72
     // Plus base 1.2 = 13.92 -> round to 13.9
@@ -20,7 +23,7 @@ describe('Carbon Data Logic', () => {
 
   it('handles missing answers gracefully', () => {
     const answers = {
-      transport: 'car_ev' // 0.85
+      transport: 'car_ev', // 0.85
     };
     // 0.85 + 1.2 (base) = 2.05 -> round 2.1
     const baseline = calculateBaseline(answers);
@@ -40,7 +43,7 @@ describe('Carbon Data Logic', () => {
   it('calculates daily budget correctly based on goal', () => {
     const profile = {
       baseline: 20,
-      goalPercent: 15 // 15% reduction
+      goalPercent: 15, // 15% reduction
     };
     // 15% of 20 = 3
     // budget = 20 - 3 = 17
@@ -66,5 +69,4 @@ describe('Carbon Data Logic', () => {
   it('handles empty answers object returning the base emission', () => {
     expect(calculateBaseline({})).toBe(1.2);
   });
-
 });

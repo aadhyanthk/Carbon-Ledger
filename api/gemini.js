@@ -22,9 +22,9 @@ export default async function handler(req, res) {
     const modelsToTry = [
       'gemini-2.5-flash',
       'gemini-2.5-flash-lite',
-      'gemini-flash-latest'
+      'gemini-flash-latest',
     ];
-    
+
     let lastError;
     let resultText = null;
 
@@ -46,9 +46,10 @@ export default async function handler(req, res) {
     }
 
     res.status(200).json({ text: resultText });
-
   } catch (error) {
     console.error('Gemini API Proxy Error:', error);
-    res.status(500).json({ error: error.message || 'Failed to generate content' });
+    res
+      .status(500)
+      .json({ error: error.message || 'Failed to generate content' });
   }
 }

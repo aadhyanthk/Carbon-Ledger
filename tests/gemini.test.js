@@ -9,12 +9,11 @@ vi.mock('@google/generative-ai', () => {
       getGenerativeModel() {
         return { generateContent: mockGenerateContent };
       }
-    }
+    },
   };
 });
 
 globalThis.window = { showToast: vi.fn() };
-
 
 describe('Gemini AI Service', () => {
   beforeEach(() => {
@@ -26,38 +25,39 @@ describe('Gemini AI Service', () => {
       // Mocking a successful JSON response
       const mockResponseText = `[{"category": "transport", "label": "Drove to work", "kgCO2": 4.5}]`;
       mockGenerateContent.mockResolvedValueOnce({
-        response: { text: () => mockResponseText }
+        response: { text: () => mockResponseText },
       });
 
-      const result = await parseActivity("drove to work");
+      const result = await parseActivity('drove to work');
       expect(result).toHaveLength(1);
       expect(result[0].category).toBe('transport');
       expect(result[0].kgCO2).toBe(4.5);
     });
 
     it('handles markdown wrapped JSON responses', async () => {
-      const mockResponseText = "```json\n[{\"category\": \"food\", \"label\": \"Beef burger\", \"kgCO2\": 5.0}]\n```";
+      const mockResponseText =
+        '```json\n[{"category": "food", "label": "Beef burger", "kgCO2": 5.0}]\n```';
       mockGenerateContent.mockResolvedValueOnce({
-        response: { text: () => mockResponseText }
+        response: { text: () => mockResponseText },
       });
 
-      const result = await parseActivity("had a burger");
+      const result = await parseActivity('had a burger');
       expect(result).toHaveLength(1);
       expect(result[0].category).toBe('food');
     });
 
     it('returns empty array on malformed JSON', async () => {
       mockGenerateContent.mockResolvedValueOnce({
-        response: { text: () => 'Sorry, I do not understand' }
+        response: { text: () => 'Sorry, I do not understand' },
       });
 
-      const result = await parseActivity("unknown text");
+      const result = await parseActivity('unknown text');
       expect(result).toBeNull();
     });
 
     it('returns null on API failure', async () => {
       mockGenerateContent.mockRejectedValueOnce(new Error('Network error'));
-      const result = await parseActivity("test");
+      const result = await parseActivity('test');
       expect(result).toBeNull();
     });
   });
@@ -65,11 +65,15 @@ describe('Gemini AI Service', () => {
   describe('getInsight', () => {
     it('returns string insight from AI', async () => {
       mockGenerateContent.mockResolvedValueOnce({
-        response: { text: () => 'Great job keeping emissions low!' }
+        response: { text: () => 'Great job keeping emissions low!' },
       });
 
       const result = await getInsight({
-        totalKg: 10, budget: 15, topCategory: 'food', period: 'week', activities: []
+        totalKg: 10,
+        budget: 15,
+        topCategory: 'food',
+        period: 'week',
+        activities: [],
       });
       expect(result).toBe('Great job keeping emissions low!');
     });
@@ -79,10 +83,10 @@ describe('Gemini AI Service', () => {
     it('parses scenario JSON correctly', async () => {
       const mockJson = `{"summary": "Big savings", "annualSavingKg": 100, "equivalent": "5 trees"}`;
       mockGenerateContent.mockResolvedValueOnce({
-        response: { text: () => mockJson }
+        response: { text: () => mockJson },
       });
 
-      const result = await whatIf("what if I walked?", { baseline: 15 });
+      const result = await whatIf('what if I walked?', { baseline: 15 });
       expect(result.summary).toBe('Big savings');
       expect(result.annualSavingKg).toBe(100);
     });
