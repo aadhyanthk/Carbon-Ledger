@@ -1,18 +1,14 @@
 /**
  * CarbonLedger — Sanitization Utilities
  */
+import DOMPurify from 'dompurify';
 
 /**
- * Escapes HTML characters to prevent XSS.
- * @param {string} str - The string to escape.
- * @returns {string} The escaped string.
+ * Sanitizes HTML strings to prevent XSS.
+ * @param {string} str - The string to sanitize.
+ * @returns {string} The sanitized string.
  */
 export function escapeHtml(str) {
   if (str === null || str === undefined) return '';
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
+  return DOMPurify.sanitize(String(str));
 }
