@@ -223,20 +223,20 @@ function initSimulator() {
 
       const isPositive = res.annualSavingKg > 0;
       
-      resultDiv.innerHTML = \`
+      resultDiv.innerHTML = `
         <div class="ai-result-card" style="align-items:flex-start;">
-          <div class="activity-icon" style="background: \${isPositive ? 'var(--green-100)' : '#fee2e2'}">\${isPositive ? '🌿' : '⚠️'}</div>
+          <div class="activity-icon" style="background: ${isPositive ? 'var(--green-100)' : '#fee2e2'}">${isPositive ? '🌿' : '⚠️'}</div>
           <div class="ai-res-info">
-            <p style="font-size:0.9rem; margin-bottom:8px;">\${res.summary}</p>
+            <p style="font-size:0.9rem; margin-bottom:8px;">${res.summary}</p>
             <div class="flex items-center gap-12 mt-8">
-              <span style="font-family:'Outfit'; font-weight:700; color:\${isPositive ? 'var(--green-700)' : 'var(--red-500)'}">
-                \${isPositive ? '-' : '+'}\${Math.abs(res.annualSavingKg)} kg/yr
+              <span style="font-family:'Outfit'; font-weight:700; color:${isPositive ? 'var(--green-700)' : 'var(--red-500)'}">
+                ${isPositive ? '-' : '+'}${Math.abs(res.annualSavingKg)} kg/yr
               </span>
-              <span style="font-size:0.8rem; color:var(--text-muted)">\${res.equivalent}</span>
+              <span style="font-size:0.8rem; color:var(--text-muted)">${res.equivalent}</span>
             </div>
           </div>
         </div>
-      \`;
+      `;
     });
   }
 }
