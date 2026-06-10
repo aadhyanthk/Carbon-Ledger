@@ -1,3 +1,9 @@
 - can't see share button in reports page
+  - **Root Cause**: The `.bottom-nav` element is `position: fixed` with a height of `72px`. While the `#view-root` had `padding-bottom`, the inner `.reports-wrap` container only had `16px` bottom padding. This caused the bottommost content (the share button) to scroll underneath the fixed navigation bar, making it invisible or unclickable.
+  - **Fix**: Increased the `padding-bottom` of `.reports-wrap` to `88px` in `style.css` so the content physically extends above the bottom nav.
 - homepage budget tile and streak line are awkwardly spaced
+  - **Root Cause**: The `.budget-card` had a bottom margin of `24px` (`margin: -28px 16px 24px;`), while the streak line underneath it had a `16px` bottom margin (`mb-16`). This unbalanced `24px` top / `16px` bottom spacing made the streak line awkwardly float closer to the next card.
+  - **Fix**: Adjusted `.budget-card`'s margin to `margin: -28px 16px 16px;` to provide symmetric `16px` spacing above and below the streak line.
 - daily baseline text in settings and streak freezes in achievements are not visible in dark mode
+  - **Root Cause**: The `.highlight-box` elements in both components used inline styles like `style="background:var(--green-50); color:var(--text-primary);"`. While there was an `!important` override in `style.css` for the background, inline styles heavily complicate the dark mode CSS variable cascade. Additionally, elements like the "Reduction Goal" text used inline hardcoded dark colors (`color:var(--green-700);`), which became completely unreadable against the darkened background.
+  - **Fix**: Stripped out all inline styling for backgrounds and colors in `settings.js` and `streaks.js`. Moved the default styles to a base `.highlight-box` and `.text-highlight` class in `style.css`, allowing `[data-theme="dark"]` to cleanly and natively flip the background and text colors without fighting inline specificity.
