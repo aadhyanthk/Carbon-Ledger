@@ -36,6 +36,11 @@ export async function render() {
       <div class="settings-section">
         <h3>Preferences</h3>
         
+        <button class="theme-toggle" id="btn-theme-toggle" aria-label="Toggle dark mode">
+          <span class="theme-toggle-label" id="theme-label">🌙 Dark Mode</span>
+          <div class="theme-toggle-switch" id="theme-switch"></div>
+        </button>
+
         <div class="settings-row" id="btn-recalibrate" role="button" tabindex="0">
           <div class="row-label">Recalibrate Baseline</div>
           <div class="row-chevron">›</div>
@@ -86,7 +91,26 @@ export async function render() {
 
 export function init() {
   const modal = document.getElementById('modal-profile');
-  
+
+  // Dark mode toggle
+  const themeSwitch = document.getElementById('theme-switch');
+  const themeLabel  = document.getElementById('theme-label');
+  const isDark = () => document.documentElement.getAttribute('data-theme') === 'dark' ||
+    (!document.documentElement.hasAttribute('data-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+  function syncToggleUI() {
+    const dark = isDark();
+    themeSwitch?.classList.toggle('on', dark);
+    if (themeLabel) themeLabel.textContent = dark ? '☀️ Light Mode' : '🌙 Dark Mode';
+  }
+  syncToggleUI();
+
+  document.getElementById('btn-theme-toggle')?.addEventListener('click', () => {
+    window.toggleTheme();
+    syncToggleUI();
+  });
+
+
   document.getElementById('btn-edit-profile')?.addEventListener('click', () => {
     modal.classList.remove('hidden');
   });

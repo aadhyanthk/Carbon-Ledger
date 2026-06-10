@@ -71,7 +71,149 @@
   --nav-height: 72px;
 }
 
-/* --- Reset --- */
+/* --- Dark Mode Tokens --- */
+/* Applied via system preference OR manual [data-theme="dark"] on <html> */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --text-primary:   #f0fdf4;
+    --text-secondary: #86efac;
+    --text-muted:     #9ca3af;
+    --bg-primary:     #0a1a0f;
+    --bg-card:        rgba(20, 40, 24, 0.90);
+    --bg-card-hover:  rgba(25, 50, 30, 0.96);
+    --shadow-xs:   0 1px 3px rgba(0, 0, 0, 0.3);
+    --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+    --shadow-lg:   0 12px 40px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* Manual dark mode override */
+[data-theme="dark"] {
+  --text-primary:   #f0fdf4;
+  --text-secondary: #86efac;
+  --text-muted:     #9ca3af;
+  --bg-primary:     #0a1a0f;
+  --bg-card:        rgba(20, 40, 24, 0.90);
+  --bg-card-hover:  rgba(25, 50, 30, 0.96);
+  --shadow-xs:   0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+  --shadow-lg:   0 12px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* Manual light mode override (when system is dark but user chose light) */
+[data-theme="light"] {
+  --text-primary:   #1a2e05;
+  --text-secondary: #3f6212;
+  --text-muted:     #6b7280;
+  --bg-primary:     #f0fdf4;
+  --bg-card:        rgba(255, 255, 255, 0.88);
+  --bg-card-hover:  rgba(255, 255, 255, 0.96);
+  --shadow-xs:   0 1px 3px rgba(20, 83, 45, 0.08);
+  --shadow-card: 0 4px 24px rgba(20, 83, 45, 0.10);
+  --shadow-lg:   0 12px 40px rgba(20, 83, 45, 0.15);
+}
+
+/* Dark background gradient override */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) body::before {
+    background:
+      radial-gradient(ellipse at 20% 0%, rgba(34, 197, 94, 0.07) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 100%, rgba(251, 191, 36, 0.05) 0%, transparent 60%),
+      linear-gradient(180deg, #0a1a0f 0%, #071209 100%);
+  }
+}
+
+[data-theme="dark"] body::before {
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(34, 197, 94, 0.07) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 100%, rgba(251, 191, 36, 0.05) 0%, transparent 60%),
+    linear-gradient(180deg, #0a1a0f 0%, #071209 100%);
+}
+
+/* Dark nav override */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .bottom-nav {
+    background: rgba(10, 26, 15, 0.95);
+    border-top-color: rgba(34, 197, 94, 0.15);
+  }
+}
+
+[data-theme="dark"] .bottom-nav {
+  background: rgba(10, 26, 15, 0.95);
+  border-top-color: rgba(34, 197, 94, 0.15);
+}
+
+/* Dark statement card */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .statement-card {
+    background: rgba(20, 40, 24, 0.90);
+  }
+}
+
+[data-theme="dark"] .statement-card {
+  background: rgba(20, 40, 24, 0.90);
+}
+
+/* Dark mode toggle button */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: var(--bg-card);
+  border-radius: var(--radius-button);
+  margin-bottom: 8px;
+  box-shadow: var(--shadow-xs);
+  cursor: pointer;
+  border: none;
+  width: 100%;
+  text-align: left;
+  transition: background var(--transition-fast);
+}
+
+.theme-toggle:hover { background: var(--bg-card-hover); }
+
+.theme-toggle-label {
+  font-weight: 500;
+  font-size: 0.9375rem;
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+}
+
+.theme-toggle-switch {
+  width: 44px;
+  height: 24px;
+  background: var(--green-200);
+  border-radius: var(--radius-full);
+  position: relative;
+  transition: background 0.3s ease;
+  flex-shrink: 0;
+}
+
+.theme-toggle-switch::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+
+[data-theme="dark"] .theme-toggle-switch,
+.theme-toggle-switch.on {
+  background: var(--green-600);
+}
+
+[data-theme="dark"] .theme-toggle-switch::after,
+.theme-toggle-switch.on::after {
+  transform: translateX(20px);
+}
+
+
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
