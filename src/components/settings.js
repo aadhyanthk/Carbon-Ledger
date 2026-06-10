@@ -160,7 +160,7 @@ export function init() {
       await clearAllData();
       window.showToast('All data cleared.', 'info');
       setTimeout(() => {
-        window.location.hash = '/onboarding';
+        window.location.hash = '/welcome';
         window.location.reload();
       }, 1000);
     }

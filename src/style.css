@@ -465,7 +465,7 @@ p {
 
 .toast {
   background: var(--text-primary);
-  color: white;
+  color: var(--bg-primary);
   padding: 12px 20px;
   border-radius: var(--radius-button);
   font-size: 0.875rem;

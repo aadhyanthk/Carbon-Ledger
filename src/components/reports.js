@@ -50,7 +50,10 @@ export async function render() {
         <!-- Rendered by JS -->
       </div>
       
-      <button class="btn btn-secondary btn-full mb-24" id="btn-export">Export Data (JSON)</button>
+      <div class="flex gap-12 mb-24" style="flex-direction: column;">
+        <button class="btn btn-primary btn-full" id="btn-share">Share my stats 📸</button>
+        <button class="btn btn-secondary btn-full" id="btn-export">Export Data (JSON)</button>
+      </div>
     </div>
   `;
 }
@@ -93,6 +96,33 @@ export async function init() {
     a.click();
     URL.revokeObjectURL(url);
     window.showToast('Data exported successfully', 'success');
+  });
+
+  // Share
+  document.getElementById('btn-share').addEventListener('click', async () => {
+    const { shareStatsCard } = await import('../utils/share.js');
+    const { getProfile, getActivities } = await import('../services/storage.js');
+    const { getDailyBudget } = await import('../services/carbon-data.js');
+    
+    const profile = await getProfile();
+    const range = getPeriodRange(currentPeriod);
+    const activities = await getActivities(range);
+    
+    let totalKg = 0;
+    activities.forEach(a => totalKg += a.kgCO2);
+    
+    const daysInPeriod = currentPeriod === 'week' ? 7 : currentPeriod === 'month' ? 30 : Math.max(1, activities.length); // simplified
+    const periodBudget = getDailyBudget(profile) * daysInPeriod;
+    const isOver = totalKg > periodBudget;
+    
+    const periodLabel = currentPeriod === 'week' ? 'Past 7 Days' : currentPeriod === 'month' ? 'Past 30 Days' : 'All Time';
+    
+    const success = await shareStatsCard(profile, totalKg, periodLabel, isOver);
+    if (success) {
+      window.showToast('Card saved! Share it with friends.', 'success');
+    } else {
+      window.showToast('Failed to generate card.', 'error');
+    }
   });
 }
 
