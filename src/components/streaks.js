@@ -2,6 +2,7 @@
  * CarbonLedger — Streaks & Achievements Component
  */
 import { getStreak, getAchievements, getTickets, getActivities } from '../services/storage.js';
+import { fireConfetti } from '../utils/confetti.js';
 
 // Pre-defined achievements
 const BADGES = [
@@ -88,16 +89,16 @@ export async function render() {
 async function checkAchievements(streak, activities, unlockedList) {
   import('../services/storage.js').then(async ({ unlockAchievement }) => {
     if (activities.length > 0 && !unlockedList.includes('first_log')) {
-      if (await unlockAchievement('first_log')) window.showToast('Achievement Unlocked: First Log! 🌱', 'success');
+      if (await unlockAchievement('first_log')) { fireConfetti(); window.showToast('Achievement Unlocked: First Log! 🌱', 'success'); }
     }
     if (streak.current >= 3 && !unlockedList.includes('streak_3')) {
-      if (await unlockAchievement('streak_3')) window.showToast('Achievement Unlocked: 3-Day Streak! 🔥', 'success');
+      if (await unlockAchievement('streak_3')) { fireConfetti(); window.showToast('Achievement Unlocked: 3-Day Streak! 🔥', 'success'); }
     }
     if (streak.current >= 7 && !unlockedList.includes('streak_7')) {
-      if (await unlockAchievement('streak_7')) window.showToast('Achievement Unlocked: 7-Day Streak! ☄️', 'success');
+      if (await unlockAchievement('streak_7')) { fireConfetti(); window.showToast('Achievement Unlocked: 7-Day Streak! ☄️', 'success'); }
     }
     if (streak.current >= 30 && !unlockedList.includes('streak_30')) {
-      if (await unlockAchievement('streak_30')) window.showToast('Achievement Unlocked: 30-Day Streak! 🌟', 'success');
+      if (await unlockAchievement('streak_30')) { fireConfetti(); window.showToast('Achievement Unlocked: 30-Day Streak! 🌟', 'success'); }
     }
   });
 }
@@ -121,6 +122,7 @@ export function init() {
             const streak = await getStreak();
             streak.freezes += 1;
             await setStreak(streak);
+            fireConfetti();
             window.showToast('🎉 You won a Streak Freeze! ❄️', 'success');
             await unlockAchievement('lucky_draw');
           } else {

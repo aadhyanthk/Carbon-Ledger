@@ -2,6 +2,7 @@
  * CarbonLedger — Goals & Challenges Component
  */
 import { CHALLENGE_PACKS } from '../services/carbon-data.js';
+import { fireConfetti } from '../utils/confetti.js';
 import { getGoals, startChallenge, completeGoalItem, markGoalComplete, deleteGoal, getStreak } from '../services/storage.js';
 
 let goals = [];
@@ -160,6 +161,7 @@ export function init() {
       streak.freezes += 1;
       await setStreak(streak);
       
+      fireConfetti();
       window.showToast('Challenge Complete! Earned 1 Streak Freeze ❄️', 'success');
       
       // Re-render
