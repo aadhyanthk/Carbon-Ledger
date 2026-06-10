@@ -99,11 +99,18 @@
   --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
   --shadow-lg:   0 12px 40px rgba(0, 0, 0, 0.5);
 }
+.highlight-box {
+  background: var(--green-50);
+  border-radius: var(--radius-sm);
+}
 [data-theme="dark"] .highlight-box {
-  background: rgba(255, 255, 255, 0.08) !important;
+  background: rgba(255, 255, 255, 0.08);
+}
+.text-highlight {
+  color: var(--green-700);
 }
 [data-theme="dark"] .text-highlight {
-  color: var(--green-400) !important;
+  color: var(--green-400);
 }
 
 /* Manual light mode override (when system is dark but user chose light) */
@@ -778,7 +785,7 @@ p {
 }
 
 .budget-card {
-  margin: -28px 16px 24px;
+  margin: -28px 16px 16px;
   position: relative;
   z-index: 2;
 }
@@ -1033,7 +1040,7 @@ p {
 .checklist-item.done { color: var(--text-muted); text-decoration: line-through; }
 
 /* --- Reports --- */
-.reports-wrap { padding: 16px; }
+.reports-wrap { padding: 16px 16px 88px; }
 .period-selector {
   display: flex;
   gap: 6px;

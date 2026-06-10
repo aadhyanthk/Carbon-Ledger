@@ -1,0 +1,3 @@
+- can't see share button in reports page
+- homepage budget tile and streak line are awkwardly spaced
+- daily baseline text in settings and streak freezes in achievements are not visible in dark mode

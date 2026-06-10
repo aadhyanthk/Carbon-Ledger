@@ -45,12 +45,12 @@ export async function render() {
         <h2>${streak.current} Days</h2>
         <p class="text-muted mt-8">Longest streak: ${streak.longest} days</p>
         
-        <div class="mt-16 flex justify-between items-center highlight-box" style="background:var(--green-50); padding: 12px; border-radius: var(--radius-sm);">
+        <div class="mt-16 flex justify-between items-center highlight-box">
           <div class="flex items-center gap-8">
             <span>❄️</span>
             <span style="font-weight:600; font-size:0.875rem;">Streak Freezes</span>
           </div>
-          <div style="font-weight:700; color:var(--text-primary);">${streak.freezes}</div>
+          <div style="font-weight:700;">${streak.freezes}</div>
         </div>
       </div>
 

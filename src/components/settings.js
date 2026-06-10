@@ -20,14 +20,14 @@ export async function render() {
         <div style="font-size:3rem; margin-bottom:8px;" id="profile-avatar">${profile.avatar || '🌍'}</div>
         <p class="text-muted" style="font-size:0.875rem;">Member since ${new Date(profile?.createdAt || Date.now()).toLocaleDateString()}</p>
         
-        <div class="mt-16 flex justify-between items-center highlight-box" style="background:var(--green-50); padding: 12px; border-radius: var(--radius-sm); text-align:left;">
+        <div class="mt-16 flex justify-between items-center highlight-box" style="text-align:left;">
           <div>
             <div style="font-size:0.8125rem; color:var(--text-muted);">Daily Baseline</div>
-            <div style="font-weight:700; color:var(--text-primary); font-size:1.125rem;">${profile?.baseline?.toFixed(1) || '--'} kg</div>
+            <div style="font-weight:700; font-size:1.125rem;">${profile?.baseline?.toFixed(1) || '--'} kg</div>
           </div>
           <div>
             <div style="font-size:0.8125rem; color:var(--text-muted);">Reduction Goal</div>
-            <div class="text-highlight" style="font-weight:700; color:var(--green-700); font-size:1.125rem; text-align:right;">${profile?.goalPercent || 0}%</div>
+            <div class="text-highlight" style="font-weight:700; font-size:1.125rem; text-align:right;">${profile?.goalPercent || 0}%</div>
           </div>
         </div>
         <button class="btn btn-secondary btn-sm mt-16" id="btn-edit-profile">Edit Profile</button>
