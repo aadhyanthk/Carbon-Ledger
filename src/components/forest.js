@@ -17,12 +17,21 @@ let lastWidth = 0;
 let resizeObserver;
 
 export function initForest(canvasElement, initialHealth = 1) {
+  // Stop any previous animation loop
+  if (animationFrameId) cancelAnimationFrame(animationFrameId);
+  animationFrameId = null;
+
   canvas = canvasElement;
   ctx = canvas.getContext('2d');
   healthScore = initialHealth;
-  
+
+  // Reset lastWidth so resize() doesn't skip sizing a brand-new canvas
+  lastWidth = 0;
+
+  // Size the canvas synchronously BEFORE generating the scene
+  resize();
+
   if (resizeObserver) resizeObserver.disconnect();
-  
   resizeObserver = new ResizeObserver((entries) => {
     for (let entry of entries) {
       if (entry.contentRect.width > 0) {
@@ -31,10 +40,8 @@ export function initForest(canvasElement, initialHealth = 1) {
     }
   });
   resizeObserver.observe(canvas.parentElement);
-  
-  generateScene();
-  
-  if (animationFrameId) cancelAnimationFrame(animationFrameId);
+
+  // resize() already calls generateScene(), so just start the loop
   animate();
 }
 
@@ -258,8 +265,13 @@ function animate() {
 export function cleanupForest() {
   if (animationFrameId) {
     cancelAnimationFrame(animationFrameId);
+    animationFrameId = null;
   }
   if (resizeObserver) {
     resizeObserver.disconnect();
+    resizeObserver = null;
   }
+  canvas = null;
+  ctx = null;
+  lastWidth = 0;
 }
