@@ -284,8 +284,8 @@ function animate() {
     // Birds
     ctx.fillStyle = '#1e293b'; // dark slate
     for (let _i = 0; _i < 3; _i++) {
-      const bx = ((time * 1.5 + i * 40) % (width + 100)) - 50;
-      const by = 80 + Math.sin(time * 0.05 + i) * 15;
+      const bx = ((time * 1.5 + _i * 40) % (width + 100)) - 50;
+      const by = 80 + Math.sin(time * 0.05 + _i) * 15;
       ctx.save();
       ctx.translate(bx, by);
       ctx.beginPath();
