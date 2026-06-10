@@ -1336,6 +1336,18 @@ input[type="range"] {
 .fade-in { animation: fadeIn 0.4s ease; }
 
 
+/* --- Skeletons --- */
+.skel-block, .skel-line, .skel-bar, .skel-forest, .skel-pill {
+  background: var(--green-100);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+.skel-forest { height: 240px; border-radius: 0 0 32px 32px; width: 100%; margin: -16px -16px 0 -16px; width: calc(100% + 32px); }
+.skel-block { border-radius: var(--radius-card); }
+.skel-line { height: 16px; border-radius: 8px; margin-bottom: 8px; }
+.skel-bar { height: 24px; border-radius: 12px; }
+.skel-row { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
+.skel-pill { height: 32px; flex: 1; border-radius: 16px; }
+
 /* --- Reduced motion --- */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }

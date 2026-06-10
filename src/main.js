@@ -55,7 +55,73 @@ const navItems  = document.querySelectorAll('.nav-item');
 
 const NAV_ROUTES = ['/', '/log', '/goals', '/reports', '/achievements'];
 
+// ── Skeleton Screens ──────────────────────────────────────────────────────────
+
+const SKEL_BLOCK = `<div class="skel-block"></div>`;
+const SKEL_LINE  = (w = '100%') => `<div class="skel-line" style="width:${w}"></div>`;
+
+function getSkeletonFor(path) {
+  const wrap = (inner) => `<div class="page-enter" style="padding:16px;">${inner}</div>`;
+
+  switch (path) {
+    case '/':
+      return wrap(`
+        <div class="skel-forest"></div>
+        <div style="margin-top:16px;">
+          ${SKEL_BLOCK}
+          <div style="padding:20px;">
+            ${SKEL_LINE('60%')} ${SKEL_LINE('40%')}
+            <div class="skel-bar" style="margin-top:16px;"></div>
+          </div>
+        </div>
+        <div style="margin-top:16px;">
+          ${SKEL_BLOCK}
+          <div style="padding:20px;">
+            ${SKEL_LINE('50%')}
+            ${[1,2,3].map(() => `<div class="skel-row">${SKEL_LINE('70%')}</div>`).join('')}
+          </div>
+        </div>
+      `);
+
+    case '/reports':
+      return wrap(`
+        <div style="display:flex;gap:8px;margin-bottom:16px;">${[1,2,3].map(()=>`<div class="skel-pill"></div>`).join('')}</div>
+        <div class="skel-block" style="height:180px;border-radius:20px;"></div>
+        <div style="margin-top:12px;" class="skel-block" style="height:200px;border-radius:20px;"></div>
+      `);
+
+    case '/goals':
+      return wrap(`
+        ${SKEL_LINE('40%')}
+        ${[1,2].map(() => `
+          <div class="skel-block" style="height:100px;border-radius:20px;margin-top:12px;"></div>
+        `).join('')}
+      `);
+
+    case '/achievements':
+      return wrap(`
+        <div class="skel-block" style="height:160px;border-radius:20px;margin-bottom:16px;"></div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+          ${[1,2,3,4,5,6].map(() => `<div class="skel-block" style="height:100px;border-radius:16px;"></div>`).join('')}
+        </div>
+      `);
+
+    case '/log':
+      return wrap(`
+        <div class="skel-bar" style="height:44px;border-radius:12px;margin-bottom:20px;"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">
+          ${[1,2,3,4].map(() => `<div class="skel-block" style="height:90px;border-radius:20px;"></div>`).join('')}
+        </div>
+        ${[1,2,3,4].map(() => `<div class="skel-block" style="height:52px;border-radius:12px;margin-bottom:8px;"></div>`).join('')}
+      `);
+
+    default:
+      return `<div class="loading-wrap"><div class="spinner"></div></div>`;
+  }
+}
+
 async function navigate(path) {
+
   // Normalize
   if (!routes[path]) path = '/';
 
@@ -76,8 +142,8 @@ async function navigate(path) {
     await new Promise(r => setTimeout(r, 180)); // match CSS duration
   }
 
-  // 2. Show loading skeleton while fetching
-  viewRoot.innerHTML = '<div class="loading-wrap"><div class="spinner"></div><span>Loading…</span></div>';
+  // 2. Show route-matched skeleton while fetching
+  viewRoot.innerHTML = getSkeletonFor(path);
 
   // 3. Load & render component
   try {
