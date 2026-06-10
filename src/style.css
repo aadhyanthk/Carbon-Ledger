@@ -99,6 +99,12 @@
   --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
   --shadow-lg:   0 12px 40px rgba(0, 0, 0, 0.5);
 }
+[data-theme="dark"] .highlight-box {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+[data-theme="dark"] .text-highlight {
+  color: var(--green-400) !important;
+}
 
 /* Manual light mode override (when system is dark but user chose light) */
 [data-theme="light"] {
@@ -737,6 +743,7 @@ p {
 
 /* --- Dashboard --- */
 .dashboard-wrap { padding: 0 0 16px; }
+.dashboard-content { padding: 0 16px; }
 
 .forest-container {
   width: 100%;
@@ -771,7 +778,7 @@ p {
 }
 
 .budget-card {
-  margin: -28px 0 24px;
+  margin: -28px 16px 24px;
   position: relative;
   z-index: 2;
 }
