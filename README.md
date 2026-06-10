@@ -8,7 +8,7 @@
 </div>
 
 <h3 align="center">
-  <a href="https://carbon-ledger.vercel.app/">🌍 View Live Demo</a>
+  <a href="https://co-ledger.vercel.app/">🌍 View Live Demo</a>
 </h3>
 
 **CarbonLedger** is a state-of-the-art, client-side progressive web app (PWA) designed to track, analyze, and reduce your daily carbon footprint. Built entirely as an intelligent, serverless Single Page Application (SPA), it empowers users through gamification, interactive data visualizations, and AI-driven insights—all completely local and private.
