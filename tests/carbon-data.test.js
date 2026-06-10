@@ -48,4 +48,23 @@ describe('Carbon Data Logic', () => {
     expect(budget).toBe(17);
   });
 
+  it('handles a 0% goal reduction', () => {
+    const profile = { baseline: 15, goalPercent: 0 };
+    expect(getDailyBudget(profile)).toBe(15);
+  });
+
+  it('handles negative or extreme goal percentages gracefully', () => {
+    // If someone wants to increase their emissions by 50% (negative reduction)
+    const profileIncrease = { baseline: 10, goalPercent: -50 };
+    expect(getDailyBudget(profileIncrease)).toBe(15); // 10 - (-5) = 15
+
+    // If someone wants to reduce by 100% (zero emissions)
+    const profileZero = { baseline: 10, goalPercent: 100 };
+    expect(getDailyBudget(profileZero)).toBe(0);
+  });
+
+  it('handles empty answers object returning the base emission', () => {
+    expect(calculateBaseline({})).toBe(1.2);
+  });
+
 });
