@@ -186,8 +186,8 @@ async function bootstrap() {
   if (!profile || !profile.onboardingComplete) {
     const path = getPath();
     // Allow going to onboarding if already clicked get started, else welcome
-    if (path === '/onboarding') {
-      navigate('/onboarding');
+    if (path === '/onboarding' || path === '/welcome') {
+      navigate(path);
     } else {
       window.location.hash = '/welcome';
     }
