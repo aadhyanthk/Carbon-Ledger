@@ -12,6 +12,8 @@ dist/
 # AI instruction files — internal build tools, not part of deliverable
 GEMINI.md
 PROJECT.md
+GRIEVANCES.md
+SUGGESTIONS.md
 
 # Editor
 .vscode/
