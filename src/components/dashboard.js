@@ -56,7 +56,7 @@ export async function render() {
       </div>
 
       <div class="dashboard-content">
-        <div class="card mb-24">
+        <div class="card mb-16" style="padding: 12px 20px;">
           <div class="flex items-center justify-between">
             <div class="section-title" style="margin:0;">Current Streak</div>
             <div class="streak-badge">
