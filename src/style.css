@@ -527,7 +527,12 @@ p {
   display: block;
 }
 
-.dashboard-content { padding: 0 16px; }
+.dashboard-content { 
+  padding: 0 16px 88px; /* Extra padding so the FAB doesn't overlap the bottom tile */
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
 
 .section-title {
   font-family: 'Outfit', sans-serif;
@@ -540,7 +545,7 @@ p {
 }
 
 .budget-card {
-  margin: -28px 16px 16px;
+  margin: -28px 0 0;
   position: relative;
   z-index: 2;
 }
@@ -882,11 +887,16 @@ p {
 }
 
 /* --- Achievements --- */
-.achievements-wrap { padding: 16px; }
+.achievements-wrap { 
+  padding: 16px 16px 40px; 
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
 .badge-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: 16px;
 }
 .badge-card {
   background: var(--bg-card);
