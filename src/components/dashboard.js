@@ -56,10 +56,12 @@ export async function render() {
       </div>
 
       <div class="dashboard-content">
-        <div class="flex items-center justify-between mb-16">
-          <div class="section-title" style="margin:0;">Current Streak</div>
-          <div class="streak-badge">
-            ${streak.current} ${streak.current > 0 ? '🔥' : '🧊'}
+        <div class="card mb-24">
+          <div class="flex items-center justify-between">
+            <div class="section-title" style="margin:0;">Current Streak</div>
+            <div class="streak-badge">
+              ${streak.current} ${streak.current > 0 ? '🔥' : '🧊'}
+            </div>
           </div>
         </div>
 

@@ -181,6 +181,7 @@
   border: none;
   width: 100%;
   text-align: left;
+  color: var(--text-primary);
   transition: background var(--transition-fast);
 }
 
@@ -273,7 +274,7 @@ body::before {
 
 #view-root {
   flex: 1;
-  padding-bottom: var(--nav-height);
+  padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom, 24px) + 24px);
   overflow-y: auto;
 }
 
@@ -1040,7 +1041,7 @@ p {
 .checklist-item.done { color: var(--text-muted); text-decoration: line-through; }
 
 /* --- Reports --- */
-.reports-wrap { padding: 16px 16px 88px; }
+.reports-wrap { padding: 16px 16px 120px; }
 .period-selector {
   display: flex;
   gap: 6px;
@@ -1245,6 +1246,7 @@ input[type="range"] {
   width: 100%;
   text-align: left;
   font-family: inherit;
+  color: var(--text-primary);
   transition: background var(--transition-fast);
 }
 .settings-row:hover { background: var(--green-50); }
