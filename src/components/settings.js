@@ -8,7 +8,7 @@ export async function render() {
   
   return `
     <div class="page-header">
-      <button class="back-btn" onclick="window.history.back()" aria-label="Go back">
+      <button class="back-btn" onclick="window.carbonNavigate('/')" aria-label="Go back">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
       <h1>Profile & Settings</h1>
@@ -17,8 +17,8 @@ export async function render() {
     <div class="settings-wrap fade-in">
       
       <div class="card mb-24 text-center">
-        <div style="font-size:3rem; margin-bottom:8px;">🧑‍🌾</div>
-        <h2 style="margin-bottom:4px;">Carbon Guardian</h2>
+        <div style="font-size:3rem; margin-bottom:8px;" id="profile-avatar">${profile.avatar || '🧑‍🌾'}</div>
+        <h2 style="margin-bottom:4px;" id="profile-name">${profile.name || 'Carbon Guardian'}</h2>
         <p class="text-muted" style="font-size:0.875rem;">Member since ${new Date(profile?.createdAt || Date.now()).toLocaleDateString()}</p>
         
         <div class="mt-16 flex justify-between items-center" style="background:var(--green-50); padding: 12px; border-radius: var(--radius-sm); text-align:left;">
@@ -31,6 +31,7 @@ export async function render() {
             <div style="font-weight:700; color:var(--green-700); font-size:1.125rem; text-align:right;">${profile?.goalPercent || 0}%</div>
           </div>
         </div>
+        <button class="btn btn-secondary btn-sm mt-16" id="btn-edit-profile">Edit Profile</button>
       </div>
 
       <div class="settings-section">
@@ -56,7 +57,7 @@ export async function render() {
         </div>
         
         <div class="settings-row" id="btn-clear-data" role="button" tabindex="0" style="color: var(--red-500);">
-          <div class="row-label">Delete All Data</div>
+          <div class="row-label">Delete Account & Data</div>
           <div class="row-chevron">›</div>
         </div>
       </div>
@@ -67,10 +68,51 @@ export async function render() {
       </div>
 
     </div>
+    
+    <!-- Profile Edit Modal -->
+    <div id="modal-profile" class="hidden" style="position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:300; display:flex; align-items:center; justify-content:center;">
+      <div class="card" style="width:90%; max-width:320px;">
+        <h3>Edit Profile</h3>
+        <div style="margin:16px 0;">
+          <label style="display:block; font-size:0.875rem; color:var(--text-muted); margin-bottom:4px;">Display Name</label>
+          <input type="text" id="input-name" class="ai-input" style="min-height:40px; padding:8px 12px;" value="${profile?.name || ''}" placeholder="e.g. Alex">
+        </div>
+        <div style="margin:16px 0;">
+          <label style="display:block; font-size:0.875rem; color:var(--text-muted); margin-bottom:4px;">Avatar Emoji</label>
+          <input type="text" id="input-avatar" class="ai-input" style="min-height:40px; padding:8px 12px; font-size:1.5rem; text-align:center;" value="${profile?.avatar || '🧑‍🌾'}">
+        </div>
+        <div class="flex" style="gap:8px; justify-content:flex-end;">
+          <button class="btn btn-ghost btn-sm" id="btn-close-modal">Cancel</button>
+          <button class="btn btn-primary btn-sm" id="btn-save-profile">Save</button>
+        </div>
+      </div>
+    </div>
   `;
 }
 
 export function init() {
+  const modal = document.getElementById('modal-profile');
+  
+  document.getElementById('btn-edit-profile')?.addEventListener('click', () => {
+    modal.classList.remove('hidden');
+  });
+  
+  document.getElementById('btn-close-modal')?.addEventListener('click', () => {
+    modal.classList.add('hidden');
+  });
+  
+  document.getElementById('btn-save-profile')?.addEventListener('click', async () => {
+    const { getProfile, setProfile } = await import('../services/storage.js');
+    const p = await getProfile();
+    p.name = document.getElementById('input-name').value.trim();
+    p.avatar = document.getElementById('input-avatar').value.trim() || '🧑‍🌾';
+    await setProfile(p);
+    
+    document.getElementById('profile-name').textContent = p.name || 'Carbon Guardian';
+    document.getElementById('profile-avatar').textContent = p.avatar;
+    modal.classList.add('hidden');
+    window.showToast('Profile updated!', 'success');
+  });
   document.getElementById('btn-recalibrate')?.addEventListener('click', () => {
     if (confirm('This will restart the onboarding quiz to set a new baseline. Your logged activities and streaks will be kept. Continue?')) {
       window.carbonNavigate('/onboarding');

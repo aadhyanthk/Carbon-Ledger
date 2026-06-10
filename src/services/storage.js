@@ -188,6 +188,15 @@ export async function markGoalComplete(goalId) {
   return idbSet('goals', goals);
 }
 
+/**
+ * Delete a goal (allows retaking)
+ * @param {string} goalId
+ */
+export async function deleteGoal(goalId) {
+  const goals = await getGoals();
+  return idbSet('goals', goals.filter(g => g.id !== goalId));
+}
+
 // ── Achievements ──────────────────────────────────────────────────────────────
 
 /** @returns {Promise<string[]>} Array of unlocked achievement IDs */

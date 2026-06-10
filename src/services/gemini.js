@@ -13,7 +13,7 @@ let model = null;
 function getModel() {
   if (!model) {
     genAI = new GoogleGenerativeAI(API_KEY);
-    model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+    model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
   }
   return model;
 }
@@ -68,6 +68,7 @@ Rules:
     );
   } catch (err) {
     console.error('Gemini parseActivity error:', err);
+    window.showToast('AI Error: ' + err.message, 'error');
     return null; // null = error, [] = no activities found
   }
 }
@@ -144,6 +145,7 @@ Return ONLY valid JSON.`;
     return JSON.parse(clean);
   } catch (err) {
     console.error('Gemini whatIf error:', err);
+    window.showToast('AI Error: ' + err.message, 'error');
     return {
       summary: 'Unable to calculate this scenario right now. Try rephrasing your question.',
       annualSavingKg: 0,

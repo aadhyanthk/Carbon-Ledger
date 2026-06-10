@@ -2,7 +2,7 @@
  * CarbonLedger — Goals & Challenges Component
  */
 import { CHALLENGE_PACKS } from '../services/carbon-data.js';
-import { getGoals, startChallenge, completeGoalItem, markGoalComplete, getStreak } from '../services/storage.js';
+import { getGoals, startChallenge, completeGoalItem, markGoalComplete, deleteGoal, getStreak } from '../services/storage.js';
 
 let goals = [];
 let streak = null;
@@ -19,7 +19,7 @@ export async function render() {
 
   return `
     <div class="page-header">
-      <button class="back-btn" onclick="window.history.back()" aria-label="Go back">
+      <button class="back-btn" onclick="window.carbonNavigate('/')" aria-label="Go back">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
       <h1>Goals</h1>
@@ -44,6 +44,7 @@ export async function render() {
             <div>
               <div class="challenge-title">${g.title}</div>
               <div class="challenge-meta">Saved ${g.totalSavingKg} kg CO₂</div>
+              <button class="btn btn-secondary btn-sm mt-8 btn-retake" data-goal="${g.id}">Retake Challenge</button>
             </div>
           </div>
         `).join('')}
@@ -123,7 +124,9 @@ window.startPack = async (packId) => {
   if (pack) {
     await startChallenge(pack);
     window.showToast(`Started challenge: ${pack.title}`, 'success');
-    window.carbonNavigate('/goals'); // Re-render
+    const mod = await import('./goals.js');
+    document.getElementById('view-root').innerHTML = await mod.render();
+    mod.init();
   }
 };
 
@@ -160,6 +163,14 @@ export function init() {
       window.showToast('Challenge Complete! Earned 1 Streak Freeze ❄️', 'success');
       
       // Re-render
+      const mod = await import('./goals.js');
+      document.getElementById('view-root').innerHTML = await mod.render();
+      mod.init();
+    } else if (e.target.classList.contains('btn-retake')) {
+      const goalId = e.target.dataset.goal;
+      await deleteGoal(goalId);
+      window.showToast('Challenge available to retake!', 'info');
+      
       const mod = await import('./goals.js');
       document.getElementById('view-root').innerHTML = await mod.render();
       mod.init();

@@ -1,0 +1,11 @@
+- the app goes directly onto the onboarding quiz, there's no starting page describing what the app is.
+- there's no accounts feature. 
+- The AI Chat feature doesn't seem to work. it can't connect
+- the plus sign and See All do the same thing, See All is supposed to show only today's activity, and allow you to delete things you entered by mistake
+- when you add some activity it automatically goes back home, i want to be able to add multiple activities at once
+- successful log messages cover the plus symbol
+- i should be able to retake challenges under goals
+- i'm able to click add challenge under "my goals" multiple times and i have to go away and come back to the page for the ui to change from add to the checklists.
+- clicking the back button from anywhere takes you to the previous tab. it should instead lead only to the homepage.
+- the circle trees in the forest have a triangle cutout in them that looks bad
+- every time i scroll on the homepage, the trees refresh, instead they should remain in place, refreshing whenever we arrive to the homepage

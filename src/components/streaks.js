@@ -29,7 +29,7 @@ export async function render() {
 
   return `
     <div class="page-header">
-      <button class="back-btn" onclick="window.history.back()" aria-label="Go back">
+      <button class="back-btn" onclick="window.carbonNavigate('/')" aria-label="Go back">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
       <h1>Achievements</h1>

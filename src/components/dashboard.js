@@ -36,6 +36,12 @@ export async function render() {
     <div class="dashboard-wrap page-enter">
       <div class="forest-container">
         <canvas id="forest-canvas"></canvas>
+        <div style="position: absolute; top: 20px; left: 20px; z-index: 10;">
+          <div style="display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,0.2); backdrop-filter:blur(4px); padding:6px 12px; border-radius:20px; color:white; font-weight:600; text-shadow: 0 1px 2px rgba(0,0,0,0.3);">
+            <span>${profile.avatar || '🧑‍🌾'}</span>
+            <span>Hello, ${profile.name || 'Guardian'}</span>
+          </div>
+        </div>
       </div>
 
       <div class="card budget-card">
@@ -60,7 +66,7 @@ export async function render() {
         <div class="card mb-24">
           <div class="flex items-center justify-between mb-12">
             <div class="section-title" style="margin:0;">Today's Activity</div>
-            <a href="#/log" class="text-green font-outfit fw-semibold" style="text-decoration:none;font-size:0.875rem;">See all</a>
+            <a href="#/history" class="text-green font-outfit fw-semibold" style="text-decoration:none;font-size:0.875rem;">See all</a>
           </div>
           
           ${activities.length === 0 ? 

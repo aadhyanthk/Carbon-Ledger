@@ -12,6 +12,7 @@ let time = 0;
 let trees = [];
 let particles = [];
 let clouds = [];
+let lastWidth = 0;
 
 export function initForest(canvasElement, initialHealth = 1) {
   canvas = canvasElement;
@@ -47,6 +48,9 @@ export function updateForestHealth(newHealth, immediate = false) {
 
 function resize() {
   const rect = canvas.parentElement.getBoundingClientRect();
+  if (Math.abs(lastWidth - rect.width) < 5 && lastWidth !== 0) return; // Prevent vertical scroll triggers
+  lastWidth = rect.width;
+  
   canvas.width = rect.width * window.devicePixelRatio;
   canvas.height = rect.height * window.devicePixelRatio;
   ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
@@ -159,11 +163,9 @@ function animate() {
     ctx.save();
     ctx.translate(c.x, c.y);
     ctx.scale(c.scale, c.scale);
-    ctx.beginPath();
-    ctx.arc(0, 0, 20, 0, Math.PI*2);
-    ctx.arc(20, -10, 25, 0, Math.PI*2);
-    ctx.arc(40, 0, 20, 0, Math.PI*2);
-    ctx.fill();
+    ctx.beginPath(); ctx.arc(0, 0, 20, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(20, -10, 25, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(40, 0, 20, 0, Math.PI*2); ctx.fill();
     ctx.restore();
   });
 
@@ -210,11 +212,9 @@ function animate() {
       ctx.lineTo(-35, -20);
       ctx.fill();
     } else {
-      ctx.beginPath();
-      ctx.arc(0, -70, 30, 0, Math.PI*2);
-      ctx.arc(-20, -50, 25, 0, Math.PI*2);
-      ctx.arc(20, -50, 25, 0, Math.PI*2);
-      ctx.fill();
+      ctx.beginPath(); ctx.arc(0, -70, 30, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(-20, -50, 25, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(20, -50, 25, 0, Math.PI*2); ctx.fill();
     }
     
     ctx.restore();

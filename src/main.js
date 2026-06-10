@@ -8,9 +8,11 @@ import { showToast } from './utils/toast.js';
 // ── Router ────────────────────────────────────────────────────────────────────
 
 const routes = {
+  '/welcome':      () => import('./components/welcome.js'),
   '/onboarding':   () => import('./components/onboarding.js'),
   '/':             () => import('./components/dashboard.js'),
   '/log':          () => import('./components/logger.js'),
+  '/history':      () => import('./components/history.js'),
   '/goals':        () => import('./components/goals.js'),
   '/reports':      () => import('./components/reports.js'),
   '/simulator':    () => import('./components/simulator.js'),
@@ -78,10 +80,16 @@ window.showToast = showToast;
 async function bootstrap() {
   const profile = await getProfile();
   if (!profile || !profile.onboardingComplete) {
-    window.location.hash = '/onboarding';
+    const path = getPath();
+    // Allow going to onboarding if already clicked get started, else welcome
+    if (path === '/onboarding') {
+      navigate('/onboarding');
+    } else {
+      window.location.hash = '/welcome';
+    }
   } else {
     const path = getPath();
-    navigate(path === '/onboarding' ? '/' : path);
+    navigate(path === '/onboarding' || path === '/welcome' ? '/' : path);
   }
 }
 
